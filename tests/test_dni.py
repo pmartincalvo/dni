@@ -303,7 +303,7 @@ def test_compute_checksum_with_valids_returns_same_character(dni_strings):
     assert all(computed_checksum_is_valid)
 
 
-def test_add_checksum_with_valids_returns_same_dni():
+def test_add_checksum_with_valids_returns_same_dni(dni_strings):
     numbers = [dni_string["without_checksum"] for dni_string in dni_strings]
     valid_dni = [dni_string["valid"] for dni_string in dni_strings]
 
