@@ -78,10 +78,10 @@ False
 >>> dni.has_checksum("27592354")
 False
 
->>> dni.add_or_fix_checksum("27592354")
+>>> dni.add_or_fix_checksum("27592354").format()
 "27592354J"
 
->>> dni.add_or_fix_checksum("27592354X")
+>>> dni.add_or_fix_checksum("27592354X").format()
 "27592354J"
 
 >>> DNI("27592354", fix_issues=True).format()

@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 import dni
@@ -5,7 +7,7 @@ import dni
 
 @pytest.fixture
 def dni_strings():
-    return [
+    return (
         {
             "valid": "27592354J",
             "without_checksum": "27592354",
@@ -36,7 +38,7 @@ def dni_strings():
             "with_wrong_checksum": "12315431  H",
             "valid_checksum_character": "N",
         },
-    ]
+    )
 
 
 @pytest.fixture()
@@ -180,6 +182,111 @@ def test_issues_without_8_numbers_returns_cant_find_number_report(
     assert issues_reports_are_as_expected
 
 
+def test_checksum_is_valid_with_valids_returns_true(dni_strings):
+    validation_results = [
+        dni.checksum_is_valid(dni_string["valid"])
+        for dni_string in dni_strings
+    ]
+
+    all_validations_returned_true = all(validation_results)
+
+    assert all_validations_returned_true
+
+
+def test_checksum_is_valid_with_wrongs_returns_false(dni_strings):
+    validation_results = [
+        dni.checksum_is_valid(dni_string["wrong_checksum"])
+        for dni_string in dni_strings
+    ]
+
+    all_validations_returned_false = not any(validation_results)
+
+    assert all_validations_returned_false
+
+
+def test_checksum_is_valid_without_checksum_raises_exception(dni_strings):
+    for dni_string in dni_strings:
+        with pytest.raises(ValueError):
+            dni.checksum_is_valid(dni_string["without_checksum"])
+
+
+def test_has_checksum_with_valids_returns_true(dni_strings):
+    validation_results = [
+        dni.has_checksum(dni_string["valid"]) for dni_string in dni_strings
+    ]
+
+    all_validations_returned_true = all(validation_results)
+
+    assert all_validations_returned_true
+
+
+def test_has_checksum_with_invalids_returns_false(dni_strings):
+    validation_results = [
+        dni.has_checksum(dni_string["without_checksum"])
+        for dni_string in dni_strings
+    ]
+
+    all_validations_returned_false = not any(validation_results)
+
+    assert all_validations_returned_false
+
+
+def test_add_or_fix_checksum_with_valids_returns_without_change(dni_strings):
+    fixed_dnis = [
+        dni.add_or_fix_checksum(dni_string["valid"])
+        for dni_string in dni_strings
+    ]
+
+    regular_dnis = [dni.DNI(dni_string["valid"]) for dni_string in dni_strings]
+
+    both_are_equal = all(
+        [
+            fixed_dni == regular_dni
+            for fixed_dni, regular_dni in zip(fixed_dnis, regular_dnis)
+        ]
+    )
+
+    assert both_are_equal
+
+
+def test_add_or_fix_checksum_with_missing_returns_fixed(dni_strings):
+    fixed_dnis = [
+        dni.add_or_fix_checksum(dni_string["without_checksum"])
+        for dni_string in dni_strings
+    ]
+    valid_checksums = [
+        dni_string["valid_checksum_character"] for dni_string in dni_strings
+    ]
+
+    all_have_the_right_checksum = all(
+        [
+            fixed_dni.checksum == valid_checksum
+            for fixed_dni, valid_checksum in zip(fixed_dnis, valid_checksums)
+        ]
+    )
+
+    assert all_have_the_right_checksum
+
+
+def test_add_or_fix_checksum_with_wrong_returns_fixed(self):
+    fixed_dnis = [
+        dni.add_or_fix_checksum(dni_string["wrong_checksum"])
+        for dni_string in dni_strings
+    ]
+    valid_checksums = [
+        dni_string["valid_checksum_character"] for dni_string in dni_strings
+    ]
+
+    all_have_the_right_checksum = all(
+        [
+            fixed_dni.checksum == valid_checksum
+            for fixed_dni, valid_checksum in zip(fixed_dnis, valid_checksums)
+        ]
+    )
+
+    assert all_have_the_right_checksum
+
+
 def test_compute_checksum_with_valids_returns_same_character(dni_strings):
     numbers = [dni_string["without_checksum"] for dni_string in dni_strings]
     valid_checksum_characters = [
@@ -232,46 +339,73 @@ def test_extract_dnis_without_a_dni_returns_none(text_with_two_dnis):
 
 class TestDNI:
     def test_instantiate_dni_with_valids_works(self):
-        assert False
+        dni_instances = [
+            dni.DNI(dni_string["valid"]) for dni_string in dni_strings
+        ]
+
+        all_objects_are_dni = all(
+            [isinstance(instance, dni.DNI) for instance in dni_instances]
+        )
+
+        assert all_objects_are_dni
 
     def test_instantiate_dni_without_checksums_raises_error(self):
-        assert False
+        for dni_string in dni_strings:
+            with pytest.raises(ValueError):
+                dni.DNI(dni_string["without_checksum"])
+
+    def test_instantiate_dni_with_wrong_checksums_raises_error(self):
+        for dni_string in dni_strings:
+            with pytest.raises(ValueError):
+                dni.DNI(dni_string["wrong_checksum"])
 
     def test_instantiate_dni_without_checksums_with_fix_issues_works(self):
-        assert False
+        dni_instances = [
+            dni.DNI(dni_string["without_checksum"], fix_issues=True)
+            for dni_string in dni_strings
+        ]
+
+        all_objects_are_dni = all(
+            [isinstance(instance, dni.DNI) for instance in dni_instances]
+        )
+
+        assert all_objects_are_dni
 
     def test_instantiate_dni_with_not_a_dni_raises_value_error(self):
-        assert False
+        for lookalike in dni_lookalikes:
+            with pytest.raises(ValueError):
+                dni.DNI(lookalike)
 
     def test_dni_returns_components_correctly(self):
-        assert False
+        dni_instances = [
+            dni.DNI(dni_string["valid"], fix_issues=True)
+            for dni_string in dni_strings
+        ]
+
+        all_numbers_are_correct = all(
+            [re.match("^[1-9]{8}$", a_dni.number) for a_dni in dni_instances]
+        )
+
+        all_checksum_are_correct = all(
+            [
+                re.match("^[TRWAGMYFPDXBNJZSQVHLCKE]{1}$", a_dni.checksum)
+                for a_dni in dni_instances
+            ]
+        )
+
+        assert all_numbers_are_correct and all_checksum_are_correct
 
     def test_several_format_combinations_output_as_expected(self):
-        assert False
+        a_dni = dni.DNI("27592354J")
+
+        assert (
+            (a_dni.format(lower=True) == "27592354j")
+            and (a_dni.format(upper=True) == "27592354J")
+            and (a_dni.format(lower=True, separator="$") == "27592354$j")
+        )
 
     def test_equality_works(self):
-        assert False
+        assert dni.DNI("27592354J") == dni.DNI("27592354J")
 
     def test_inequality_works(self):
-        assert False
-
-    def test_checksum_is_valid_with_valids_returns_true(self):
-        assert False
-
-    def test_checksum_is_valid_with_wrongs_returns_false(self):
-        assert False
-
-    def test_has_checksum_with_valids_returns_true(self):
-        assert False
-
-    def test_has_checksum_with_invalids_returns_false(self):
-        assert False
-
-    def test_add_or_fix_checksum_with_valids_returns_without_change(self):
-        assert False
-
-    def test_add_or_fix_checksum_with_missing_returns_fixed(self):
-        assert False
-
-    def test_add_or_fix_checksum_with_wrong_returns_fied(self):
-        assert False
+        assert dni.DNI("27592354J") != dni.DNI("12365487c")
