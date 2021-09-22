@@ -33,11 +33,6 @@ jobs:
       run: |
         pylint ./dni/ --rcfile=.pylintrc
     - name: Test with pytest
-      id: pytest
-      uses: alexanderdamiani/pytester-cov@v1.2.0
-      with:
-        pytest-root-dir: '.'
-        cov-omit-list: 'tests/*, .github'
-        cov-threshold-single: ${{ env.COVERAGE_SINGLE }}
-        cov-threshold-total: ${{ env.COVERAGE_TOTAL }}
+      run: |
+        pytest .
 
