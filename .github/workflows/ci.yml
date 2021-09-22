@@ -10,6 +10,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      COVERAGE_SINGLE: 60
+      COVERAGE_TOTAL: 60
     strategy:
       fail-fast: false
       matrix:
@@ -26,7 +29,15 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pytest
         pip install -r requirements-test.txt
-        pip install .
-    - name: Test with pytest
+    - name: Check with pylint
       run: |
-        pytest .
+        pylint ./dni/ --rcfile=.pylintrc
+    - name: Test with pytest
+      id: pytest
+      uses: alexanderdamiani/pytester-cov@v1.2.0
+      with:
+        pytest-root-dir: '.'
+        cov-omit-list: 'tests/*, .github'
+        cov-threshold-single: ${{ env.COVERAGE_SINGLE }}
+        cov-threshold-total: ${{ env.COVERAGE_TOTAL }}
+
