@@ -14,11 +14,11 @@ True
 True
 
 
->>> # Wrong checksum character. Should be 'J'.
+>>> # Wrong check digit character. Should be 'J'.
 >>> dni.is_valid("27592354Y") 
 False
 
->>> # Missing checksum character. Should be 'J'.
+>>> # Missing check digit character. Should be 'J'.
 >>> dni.is_valid("27592354")
 False
 
@@ -31,22 +31,23 @@ False
 {
     "issues":[
         {
-            "type": "Missing checksum.",
+            "type": "Missing check digit.",
             "details": {
-                "correct_checksum": "J"
+                "correct_check_digit": "J"
             }
         }
     ]
 }
 ```
 
-Get the checksum character for a DNI number:
+Get the check digit character for a DNI number:
+
 ```python
->>> import dni
->>> dni.compute_checksum("27592354")
+>> > import dni
+>> > dni.compute_check_digit("27592354")
 "J"
 
->>> dni.add_checksum("27592354")
+>> > dni.add_check_digit("27592354")
 "27592354J"
 ```
 
@@ -56,7 +57,7 @@ Avoid primitive obsession with the DNI class. Get the components of the DNI, for
 >>> some_dni = dni.DNI("27592354J")
 >>> some_dni.number
 "27592354"
->>> some_dni.checksum
+>>> some_dni.check_digit
 "J"
 
 >>>some_dni.format(upper=True, separator="-")
@@ -70,18 +71,18 @@ Avoid primitive obsession with the DNI class. Get the components of the DNI, for
 True
 ```
 
-Spot and solve missing or wrong checksum issues.
+Spot and solve missing or wrong check digit issues.
 ```python
->>> dni.checksum_is_valid("27592354X")
+>>> dni.check_digit_is_valid("27592354X")
 False
 
->>> dni.has_checksum("27592354")
+>>> dni.has_check_digit("27592354")
 False
 
->>> dni.add_or_fix_checksum("27592354").format()
+>>> dni.add_or_fix_check_digit("27592354").format()
 "27592354J"
 
->>> dni.add_or_fix_checksum("27592354X").format()
+>>> dni.add_or_fix_check_digit("27592354X").format()
 "27592354J"
 
 >>> DNI("27592354", fix_issues=True).format()
