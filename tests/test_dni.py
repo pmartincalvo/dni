@@ -341,7 +341,7 @@ def test_extract_number_from_string_that_contains_it_extracts_succesfully(
     dni_strings
 ):
     numbers = [
-        dni._extract_one_dni_number_from_string_that_contains_it(
+        dni._extract_one_dni_number_from_string(
             dni_string["valid"]
         )
         for dni_string in dni_strings
@@ -356,16 +356,32 @@ def test_extract_number_with_multiple_numbers_raises_exception(
     text_with_two_dnis
 ):
     with pytest.raises(dni.MultipleMatchesException):
-        dni._extract_one_dni_number_from_string_that_contains_it(
+        dni._extract_one_dni_number_from_string(
             text_with_two_dnis
         )
 
 
 def test_extract_number_with_no_number_raises_exception(text_with_no_dni):
     with pytest.raises(dni.NoNumberFoundException):
-        dni._extract_one_dni_number_from_string_that_contains_it(
+        dni._extract_one_dni_number_from_string(
             text_with_no_dni
         )
+
+def test_extract_numbers_with_multiple_numbers_returns_multiple_numbers(text_with_two_dnis):
+    numbers = dni._extract_multiple_dni_numbers_from_string(text_with_two_dnis)
+
+    assert len(numbers) == 2
+
+
+def test_extract_numbers_with_one_number_returns_one_number(dni_strings):
+    numbers = dni._extract_multiple_dni_numbers_from_string(dni_strings[0]["valid"])
+
+    assert len(numbers) == 1
+
+
+def test_extract_numbers_with_no_number_raises_exception(text_with_no_dni):
+    with pytest.raises(dni.NoNumberFoundException):
+        dni._extract_multiple_dni_numbers_from_string(text_with_no_dni)
 
 
 class TestDNI:

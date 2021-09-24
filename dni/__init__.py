@@ -1,5 +1,8 @@
+from typing import List
+
 import re
 
+from .constants import UPPERCASE_CHECK_DIGITS, REGEX_FOR_8_DIGIT_NUMBER
 from .exceptions import (
     MultipleMatchesException,
     InvalidCheckDigitException,
@@ -15,10 +18,10 @@ def compute_check_digit(dni_number: str) -> str:
     :return: the check digit for the number as an uppercase, single character
     string.
     """
-    return "TRWAGMYFPDXBNJZSQVHLCKE"[int(dni_number) % 23]
+    return UPPERCASE_CHECK_DIGITS[int(dni_number) % 23]
 
 
-def _extract_one_dni_number_from_string_that_contains_it(
+def _extract_one_dni_number_from_string(
     string_that_contains_dni_number: str
 ) -> str:
     """
@@ -28,12 +31,31 @@ def _extract_one_dni_number_from_string_that_contains_it(
     number.
     :return: the number in string form.
     """
-    results = re.findall(
-        "[^1-9]*([1-9]{8})[^1-9]*", string_that_contains_dni_number
-    )
+    results = _extract_multiple_dni_numbers_from_string(string_that_contains_dni_number)
     if not results:
         raise NoNumberFoundException()
     if len(results) > 1:
         raise MultipleMatchesException()
 
     return results.pop()
+
+
+def _extract_multiple_dni_numbers_from_string(
+    string_that_contains_dni_numbers: str
+) -> List[str]:
+    """
+    Extracts all occurences of 8 digit numbers in the string. Raises an
+    exception if the string does not contain such a number or contains more
+    than one.
+    :param string_that_contains_dni_numbers: the string that contains some
+    nubmers.
+    :return: a list with the found numbers.
+    """
+
+    results = re.findall(
+        REGEX_FOR_8_DIGIT_NUMBER, string_that_contains_dni_numbers
+    )
+    if not results:
+        raise NoNumberFoundException()
+
+    return results
