@@ -108,7 +108,9 @@ def test_issues_with_valids_returns_none(dni_strings):
     assert all_issues_returned_none
 
 
-def test_issues_with_wrong_check_digit_returns_wrong_check_digit_report(dni_strings):
+def test_issues_with_wrong_check_digit_returns_wrong_check_digit_report(
+    dni_strings
+):
     list_of_issues = [
         dni.issues(dni_string["with_wrong_check_digit"])
         for dni_string in dni_strings
@@ -137,7 +139,9 @@ def test_issues_with_wrong_check_digit_returns_wrong_check_digit_report(dni_stri
     assert issues_reports_are_as_expected
 
 
-def test_issues_without_check_digit_returns_wrong_check_digit_report(dni_strings):
+def test_issues_without_check_digit_returns_wrong_check_digit_report(
+    dni_strings
+):
     list_of_issues = [
         dni.issues(dni_string["without_check_digit"])
         for dni_string in dni_strings
@@ -204,7 +208,9 @@ def test_check_digit_is_valid_with_wrongs_returns_false(dni_strings):
     assert all_validations_returned_false
 
 
-def test_check_digit_is_valid_without_check_digit_raises_exception(dni_strings):
+def test_check_digit_is_valid_without_check_digit_raises_exception(
+    dni_strings
+):
     for dni_string in dni_strings:
         with pytest.raises(ValueError):
             dni.check_digit_is_valid(dni_string["without_check_digit"])
@@ -231,7 +237,9 @@ def test_has_check_digit_with_invalids_returns_false(dni_strings):
     assert all_validations_returned_false
 
 
-def test_add_or_fix_check_digit_with_valids_returns_without_change(dni_strings):
+def test_add_or_fix_check_digit_with_valids_returns_without_change(
+    dni_strings
+):
     fixed_dnis = [
         dni.add_or_fix_check_digit(dni_string["valid"])
         for dni_string in dni_strings
@@ -261,7 +269,9 @@ def test_add_or_fix_check_digit_with_missing_returns_fixed(dni_strings):
     all_have_the_right_check_digit = all(
         [
             fixed_dni.check_digit == valid_check_digit
-            for fixed_dni, valid_check_digit in zip(fixed_dnis, valid_check_digits)
+            for fixed_dni, valid_check_digit in zip(
+                fixed_dnis, valid_check_digits
+            )
         ]
     )
 
@@ -280,7 +290,9 @@ def test_add_or_fix_check_digit_with_wrong_returns_fixed(self):
     all_have_the_right_check_digit = all(
         [
             fixed_dni.check_digit == valid_check_digit
-            for fixed_dni, valid_check_digit in zip(fixed_dnis, valid_check_digits)
+            for fixed_dni, valid_check_digit in zip(
+                fixed_dnis, valid_check_digits
+            )
         ]
     )
 
@@ -341,9 +353,7 @@ def test_extract_number_from_string_that_contains_it_extracts_succesfully(
     dni_strings
 ):
     numbers = [
-        dni._extract_one_dni_number_from_string(
-            dni_string["valid"]
-        )
+        dni._extract_exactly_one_dni_number_from_string(dni_string["valid"])
         for dni_string in dni_strings
     ]
 
@@ -356,25 +366,26 @@ def test_extract_number_with_multiple_numbers_raises_exception(
     text_with_two_dnis
 ):
     with pytest.raises(dni.MultipleMatchesException):
-        dni._extract_one_dni_number_from_string(
-            text_with_two_dnis
-        )
+        dni._extract_exactly_one_dni_number_from_string(text_with_two_dnis)
 
 
 def test_extract_number_with_no_number_raises_exception(text_with_no_dni):
     with pytest.raises(dni.NoNumberFoundException):
-        dni._extract_one_dni_number_from_string(
-            text_with_no_dni
-        )
+        dni._extract_exactly_one_dni_number_from_string(text_with_no_dni)
 
-def test_extract_numbers_with_multiple_numbers_returns_multiple_numbers(text_with_two_dnis):
+
+def test_extract_numbers_with_multiple_numbers_returns_multiple_numbers(
+    text_with_two_dnis
+):
     numbers = dni._extract_multiple_dni_numbers_from_string(text_with_two_dnis)
 
     assert len(numbers) == 2
 
 
 def test_extract_numbers_with_one_number_returns_one_number(dni_strings):
-    numbers = dni._extract_multiple_dni_numbers_from_string(dni_strings[0]["valid"])
+    numbers = dni._extract_multiple_dni_numbers_from_string(
+        dni_strings[0]["valid"]
+    )
 
     assert len(numbers) == 1
 
@@ -385,7 +396,7 @@ def test_extract_numbers_with_no_number_raises_exception(text_with_no_dni):
 
 
 class TestDNI:
-    def test_instantiate_dni_with_valids_works(self):
+    def test_instantiate_dni_with_valids_works(self, dni_strings):
         dni_instances = [
             dni.DNI(dni_string["valid"]) for dni_string in dni_strings
         ]
@@ -396,17 +407,23 @@ class TestDNI:
 
         assert all_objects_are_dni
 
-    def test_instantiate_dni_without_check_digits_raises_error(self):
+    def test_instantiate_dni_without_check_digits_raises_error(
+        self, dni_strings
+    ):
         for dni_string in dni_strings:
-            with pytest.raises(ValueError):
+            with pytest.raises(dni.MissingCheckDigitException):
                 dni.DNI(dni_string["without_check_digit"])
 
-    def test_instantiate_dni_with_wrong_check_digits_raises_error(self):
+    def test_instantiate_dni_with_wrong_check_digits_raises_error(
+        self, dni_strings
+    ):
         for dni_string in dni_strings:
-            with pytest.raises(ValueError):
-                dni.DNI(dni_string["wrong_check_digit"])
+            with pytest.raises(dni.InvalidCheckDigitException):
+                dni.DNI(dni_string["with_wrong_check_digit"])
 
-    def test_instantiate_dni_without_check_digits_with_fix_issues_works(self):
+    def test_instantiate_dni_without_check_digits_with_fix_issues_works(
+        self, dni_strings
+    ):
         dni_instances = [
             dni.DNI(dni_string["without_check_digit"], fix_issues=True)
             for dni_string in dni_strings
@@ -418,24 +435,37 @@ class TestDNI:
 
         assert all_objects_are_dni
 
-    def test_instantiate_dni_with_not_a_dni_raises_value_error(self):
+    def test_instantiate_dni_with_not_a_dni_raises_value_error(
+        self, dni_lookalikes
+    ):
         for lookalike in dni_lookalikes:
-            with pytest.raises(ValueError):
+            with pytest.raises(
+                (
+                    dni.NoNumberFoundException,
+                    dni.MissingCheckDigitException,
+                    dni.InvalidCheckDigitException,
+                )
+            ):
                 dni.DNI(lookalike)
 
-    def test_dni_returns_components_correctly(self):
+    def test_dni_returns_components_correctly(self, dni_strings):
         dni_instances = [
             dni.DNI(dni_string["valid"], fix_issues=True)
             for dni_string in dni_strings
         ]
 
         all_numbers_are_correct = all(
-            [re.match("^[1-9]{8}$", a_dni.number) for a_dni in dni_instances]
+            [
+                re.match(dni.REGEX_FOR_8_DIGIT_NUMBER, a_dni.number)
+                for a_dni in dni_instances
+            ]
         )
 
         all_check_digit_are_correct = all(
             [
-                re.match("^[TRWAGMYFPDXBNJZSQVHLCKE]{1}$", a_dni.check_digit)
+                re.match(
+                    dni.REGEX_FOR_UPPER_OR_LOWER_CHECK_DIGIT, a_dni.check_digit
+                )
                 for a_dni in dni_instances
             ]
         )
