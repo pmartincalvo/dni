@@ -10,33 +10,33 @@ def dni_strings():
     return (
         {
             "valid": "27592354J",
-            "without_check_digit": "27592354",
-            "with_wrong_check_digit": "27592354X",
-            "valid_check_digit_character": "J",
+            "without_check_letter": "27592354",
+            "with_wrong_check_letter": "27592354X",
+            "valid_check_letter_character": "J",
         },
         {
             "valid": "12365487c",
-            "without_check_digit": "12365487",
-            "with_wrong_check_digit": "12365487h",
-            "valid_check_digit_character": "C",
+            "without_check_letter": "12365487",
+            "with_wrong_check_letter": "12365487h",
+            "valid_check_letter_character": "C",
         },
         {
             "valid": "31654234-R",
-            "without_check_digit": "31654234",
-            "with_wrong_check_digit": "31654234-p",
-            "valid_check_digit_character": "R",
+            "without_check_letter": "31654234",
+            "with_wrong_check_letter": "31654234-p",
+            "valid_check_letter_character": "R",
         },
         {
             "valid": "45353534_h",
-            "without_check_digit": "45353534",
-            "with_wrong_check_digit": "45353534_t",
-            "valid_check_digit_character": "H",
+            "without_check_letter": "45353534",
+            "with_wrong_check_letter": "45353534_t",
+            "valid_check_letter_character": "H",
         },
         {
             "valid": "    12315431 N ",
-            "without_check_digit": "12315431",
-            "with_wrong_check_digit": "12315431  H",
-            "valid_check_digit_character": "N",
+            "without_check_letter": "12315431",
+            "with_wrong_check_letter": "12315431  H",
+            "valid_check_letter_character": "N",
         },
     )
 
@@ -66,9 +66,9 @@ def test_is_valid_with_valids_returns_true(dni_strings):
     assert all_validations_returned_true
 
 
-def test_is_valid_with_wrong_check_digit_returns_false(dni_strings):
+def test_is_valid_with_wrong_check_letter_returns_false(dni_strings):
     validation_results = [
-        dni.is_valid(dni_string["with_wrong_check_digit"])
+        dni.is_valid(dni_string["with_wrong_check_letter"])
         for dni_string in dni_strings
     ]
 
@@ -77,9 +77,9 @@ def test_is_valid_with_wrong_check_digit_returns_false(dni_strings):
     assert all_validations_returned_false
 
 
-def test_is_valid_without_check_digit_returns_false(dni_strings):
+def test_is_valid_without_check_letter_returns_false(dni_strings):
     validation_results = [
-        dni.is_valid(dni_string["without_check_digit"])
+        dni.is_valid(dni_string["without_check_letter"])
         for dni_string in dni_strings
     ]
 
@@ -108,15 +108,15 @@ def test_issues_with_valids_returns_none(dni_strings):
     assert all_issues_returned_none
 
 
-def test_issues_with_wrong_check_digit_returns_wrong_check_digit_report(
+def test_issues_with_wrong_check_letter_returns_wrong_check_letter_report(
     dni_strings
 ):
     list_of_issues = [
-        dni.issues(dni_string["with_wrong_check_digit"])
+        dni.issues(dni_string["with_wrong_check_letter"])
         for dni_string in dni_strings
     ]
-    valid_check_digits = [
-        dni_string["valid_check_digit_character"] for dni_string in dni_strings
+    valid_check_letters = [
+        dni_string["valid_check_letter_character"] for dni_string in dni_strings
     ]
 
     issues_reports_are_as_expected = all(
@@ -125,13 +125,13 @@ def test_issues_with_wrong_check_digit_returns_wrong_check_digit_report(
             == {
                 "issues": [
                     {
-                        "type": "Wrong check_digit.",
-                        "details": {"correct_check_digit": valid_check_digit},
+                        "type": "Wrong check_letter.",
+                        "details": {"correct_check_letter": valid_check_letter},
                     }
                 ]
             }
-            for issues_report, valid_check_digit in zip(
-                list_of_issues, valid_check_digits
+            for issues_report, valid_check_letter in zip(
+                list_of_issues, valid_check_letters
             )
         ]
     )
@@ -139,15 +139,15 @@ def test_issues_with_wrong_check_digit_returns_wrong_check_digit_report(
     assert issues_reports_are_as_expected
 
 
-def test_issues_without_check_digit_returns_wrong_check_digit_report(
+def test_issues_without_check_letter_returns_wrong_check_letter_report(
     dni_strings
 ):
     list_of_issues = [
-        dni.issues(dni_string["without_check_digit"])
+        dni.issues(dni_string["without_check_letter"])
         for dni_string in dni_strings
     ]
-    valid_check_digits = [
-        dni_string["valid_check_digit_character"] for dni_string in dni_strings
+    valid_check_letters = [
+        dni_string["valid_check_letter_character"] for dni_string in dni_strings
     ]
 
     issues_reports_are_as_expected = all(
@@ -156,13 +156,13 @@ def test_issues_without_check_digit_returns_wrong_check_digit_report(
             == {
                 "issues": [
                     {
-                        "type": "Missing check_digit.",
-                        "details": {"correct_check_digit": valid_check_digit},
+                        "type": "Missing check_letter.",
+                        "details": {"correct_check_letter": valid_check_letter},
                     }
                 ]
             }
-            for issues_report, valid_check_digit in zip(
-                list_of_issues, valid_check_digits
+            for issues_report, valid_check_letter in zip(
+                list_of_issues, valid_check_letters
             )
         ]
     )
@@ -186,9 +186,9 @@ def test_issues_without_8_numbers_returns_cant_find_number_report(
     assert issues_reports_are_as_expected
 
 
-def test_check_digit_is_valid_with_valids_returns_true(dni_strings):
+def test_check_letter_is_valid_with_valids_returns_true(dni_strings):
     validation_results = [
-        dni.check_digit_is_valid(dni_string["valid"])
+        dni.check_letter_is_valid(dni_string["valid"])
         for dni_string in dni_strings
     ]
 
@@ -197,9 +197,9 @@ def test_check_digit_is_valid_with_valids_returns_true(dni_strings):
     assert all_validations_returned_true
 
 
-def test_check_digit_is_valid_with_wrongs_returns_false(dni_strings):
+def test_check_letter_is_valid_with_wrongs_returns_false(dni_strings):
     validation_results = [
-        dni.check_digit_is_valid(dni_string["wrong_check_digit"])
+        dni.check_letter_is_valid(dni_string["wrong_check_letter"])
         for dni_string in dni_strings
     ]
 
@@ -208,17 +208,17 @@ def test_check_digit_is_valid_with_wrongs_returns_false(dni_strings):
     assert all_validations_returned_false
 
 
-def test_check_digit_is_valid_without_check_digit_raises_exception(
+def test_check_letter_is_valid_without_check_letter_raises_exception(
     dni_strings
 ):
     for dni_string in dni_strings:
         with pytest.raises(ValueError):
-            dni.check_digit_is_valid(dni_string["without_check_digit"])
+            dni.check_letter_is_valid(dni_string["without_check_letter"])
 
 
-def test_has_check_digit_with_valids_returns_true(dni_strings):
+def test_has_check_letter_with_valids_returns_true(dni_strings):
     validation_results = [
-        dni.has_check_digit(dni_string["valid"]) for dni_string in dni_strings
+        dni.has_check_letter(dni_string["valid"]) for dni_string in dni_strings
     ]
 
     all_validations_returned_true = all(validation_results)
@@ -226,9 +226,9 @@ def test_has_check_digit_with_valids_returns_true(dni_strings):
     assert all_validations_returned_true
 
 
-def test_has_check_digit_with_invalids_returns_false(dni_strings):
+def test_has_check_letter_with_invalids_returns_false(dni_strings):
     validation_results = [
-        dni.has_check_digit(dni_string["without_check_digit"])
+        dni.has_check_letter(dni_string["without_check_letter"])
         for dni_string in dni_strings
     ]
 
@@ -237,11 +237,11 @@ def test_has_check_digit_with_invalids_returns_false(dni_strings):
     assert all_validations_returned_false
 
 
-def test_add_or_fix_check_digit_with_valids_returns_without_change(
+def test_add_or_fix_check_letter_with_valids_returns_without_change(
     dni_strings
 ):
     fixed_dnis = [
-        dni.add_or_fix_check_digit(dni_string["valid"])
+        dni.add_or_fix_check_letter(dni_string["valid"])
         for dni_string in dni_strings
     ]
 
@@ -257,74 +257,74 @@ def test_add_or_fix_check_digit_with_valids_returns_without_change(
     assert both_are_equal
 
 
-def test_add_or_fix_check_digit_with_missing_returns_fixed(dni_strings):
+def test_add_or_fix_check_letter_with_missing_returns_fixed(dni_strings):
     fixed_dnis = [
-        dni.add_or_fix_check_digit(dni_string["without_check_digit"])
+        dni.add_or_fix_check_letter(dni_string["without_check_letter"])
         for dni_string in dni_strings
     ]
-    valid_check_digits = [
-        dni_string["valid_check_digit_character"] for dni_string in dni_strings
+    valid_check_letters = [
+        dni_string["valid_check_letter_character"] for dni_string in dni_strings
     ]
 
-    all_have_the_right_check_digit = all(
+    all_have_the_right_check_letter = all(
         [
-            fixed_dni.check_digit == valid_check_digit
-            for fixed_dni, valid_check_digit in zip(
-                fixed_dnis, valid_check_digits
+            fixed_dni.check_letter == valid_check_letter
+            for fixed_dni, valid_check_letter in zip(
+                fixed_dnis, valid_check_letters
             )
         ]
     )
 
-    assert all_have_the_right_check_digit
+    assert all_have_the_right_check_letter
 
 
-def test_add_or_fix_check_digit_with_wrong_returns_fixed(self):
+def test_add_or_fix_check_letter_with_wrong_returns_fixed(self):
     fixed_dnis = [
-        dni.add_or_fix_check_digit(dni_string["wrong_check_digit"])
+        dni.add_or_fix_check_letter(dni_string["wrong_check_letter"])
         for dni_string in dni_strings
     ]
-    valid_check_digits = [
-        dni_string["valid_check_digit_character"] for dni_string in dni_strings
+    valid_check_letters = [
+        dni_string["valid_check_letter_character"] for dni_string in dni_strings
     ]
 
-    all_have_the_right_check_digit = all(
+    all_have_the_right_check_letter = all(
         [
-            fixed_dni.check_digit == valid_check_digit
-            for fixed_dni, valid_check_digit in zip(
-                fixed_dnis, valid_check_digits
+            fixed_dni.check_letter == valid_check_letter
+            for fixed_dni, valid_check_letter in zip(
+                fixed_dnis, valid_check_letters
             )
         ]
     )
 
-    assert all_have_the_right_check_digit
+    assert all_have_the_right_check_letter
 
 
-def test_compute_check_digit_with_valids_returns_same_character(dni_strings):
-    numbers = [dni_string["without_check_digit"] for dni_string in dni_strings]
-    valid_check_digit_characters = [
-        dni_string["valid_check_digit_character"] for dni_string in dni_strings
+def test_compute_check_letter_with_valids_returns_same_character(dni_strings):
+    numbers = [dni_string["without_check_letter"] for dni_string in dni_strings]
+    valid_check_letter_characters = [
+        dni_string["valid_check_letter_character"] for dni_string in dni_strings
     ]
 
-    computed_check_digit_is_valid = [
-        dni.compute_check_digit(number) == valid_check_digit_character.upper()
-        for number, valid_check_digit_character in zip(
-            numbers, valid_check_digit_characters
+    computed_check_letter_is_valid = [
+        dni.compute_check_letter(number) == valid_check_letter_character.upper()
+        for number, valid_check_letter_character in zip(
+            numbers, valid_check_letter_characters
         )
     ]
 
-    assert all(computed_check_digit_is_valid)
+    assert all(computed_check_letter_is_valid)
 
 
-def test_add_check_digit_with_valids_returns_same_dni(dni_strings):
-    numbers = [dni_string["without_check_digit"] for dni_string in dni_strings]
+def test_add_check_letter_with_valids_returns_same_dni(dni_strings):
+    numbers = [dni_string["without_check_letter"] for dni_string in dni_strings]
     valid_dni = [dni_string["valid"] for dni_string in dni_strings]
 
-    computed_check_digit_is_valid = [
-        dni.add_check_digit(number) == valid_dni.upper()
+    computed_check_letter_is_valid = [
+        dni.add_check_letter(number) == valid_dni.upper()
         for number, valid_dni in zip(numbers, valid_dni)
     ]
 
-    assert all(computed_check_digit_is_valid)
+    assert all(computed_check_letter_is_valid)
 
 
 def test_contains_dni_with_a_dni_returns_true(text_with_two_dnis):
@@ -357,9 +357,9 @@ def test_extract_number_from_string_that_contains_it_extracts_succesfully(
         for dni_string in dni_strings
     ]
 
-    all_numbers_have_8_digits = all([len(number) == 8 for number in numbers])
+    all_numbers_have_8_letters = all([len(number) == 8 for number in numbers])
 
-    assert all_numbers_have_8_digits
+    assert all_numbers_have_8_letters
 
 
 def test_extract_number_with_multiple_numbers_raises_exception(
@@ -395,34 +395,34 @@ def test_extract_numbers_with_no_number_raises_exception(text_with_no_dni):
         dni._extract_multiple_dni_numbers_from_string(text_with_no_dni)
 
 
-def test_contains_number_and_check_digit_on_valid_dni_returns_true(
+def test_contains_number_and_check_letter_on_valid_dni_returns_true(
     dni_strings
 ):
 
-    contain_numbers_and_check_digits = [
-        dni._contains_one_dni_number_and_check_digit(dni_string["valid"])
+    contain_numbers_and_check_letters = [
+        dni._contains_one_dni_number_and_check_letter(dni_string["valid"])
         for dni_string in dni_strings
     ]
 
-    all_are_true = all(contain_numbers_and_check_digits)
+    all_are_true = all(contain_numbers_and_check_letters)
 
     assert all_are_true
 
 
-def test_contains_number_and_check_digit_on_invalid_return_false(dni_strings):
+def test_contains_number_and_check_letter_on_invalid_return_false(dni_strings):
 
     all_sorts_of_invalid = [
-        dni_string["without_check_digit"] for dni_string in dni_strings
+        dni_string["without_check_letter"] for dni_string in dni_strings
     ] + [
-        dni_string["valid_check_digit_character"] for dni_string in dni_strings
+        dni_string["valid_check_letter_character"] for dni_string in dni_strings
     ]
 
-    contain_numbers_and_check_digits = [
-        dni._contains_one_dni_number_and_check_digit(invalid_string)
+    contain_numbers_and_check_letters = [
+        dni._contains_one_dni_number_and_check_letter(invalid_string)
         for invalid_string in all_sorts_of_invalid
     ]
 
-    all_are_false = not all(contain_numbers_and_check_digits)
+    all_are_false = not all(contain_numbers_and_check_letters)
 
     assert all_are_false
 
@@ -439,25 +439,25 @@ class TestDNI:
 
         assert all_objects_are_dni
 
-    def test_instantiate_dni_without_check_digits_raises_error(
+    def test_instantiate_dni_without_check_letters_raises_error(
         self, dni_strings
     ):
         for dni_string in dni_strings:
             with pytest.raises(dni.MissingCheckDigitException):
-                dni.DNI(dni_string["without_check_digit"])
+                dni.DNI(dni_string["without_check_letter"])
 
-    def test_instantiate_dni_with_wrong_check_digits_raises_error(
+    def test_instantiate_dni_with_wrong_check_letters_raises_error(
         self, dni_strings
     ):
         for dni_string in dni_strings:
             with pytest.raises(dni.InvalidCheckDigitException):
-                dni.DNI(dni_string["with_wrong_check_digit"])
+                dni.DNI(dni_string["with_wrong_check_letter"])
 
-    def test_instantiate_dni_without_check_digits_with_fix_issues_works(
+    def test_instantiate_dni_without_check_letters_with_fix_issues_works(
         self, dni_strings
     ):
         dni_instances = [
-            dni.DNI(dni_string["without_check_digit"], fix_issues=True)
+            dni.DNI(dni_string["without_check_letter"], fix_issues=True)
             for dni_string in dni_strings
         ]
 
@@ -493,16 +493,16 @@ class TestDNI:
             ]
         )
 
-        all_check_digit_are_correct = all(
+        all_check_letter_are_correct = all(
             [
                 re.match(
-                    dni.REGEX_FOR_UPPER_OR_LOWER_CHECK_DIGIT, a_dni.check_digit
+                    dni.REGEX_FOR_UPPER_OR_LOWER_CHECK_DIGIT, a_dni.check_letter
                 )
                 for a_dni in dni_instances
             ]
         )
 
-        assert all_numbers_are_correct and all_check_digit_are_correct
+        assert all_numbers_are_correct and all_check_letter_are_correct
 
     def test_several_format_combinations_output_as_expected(self):
         a_dni = dni.DNI("27592354J")

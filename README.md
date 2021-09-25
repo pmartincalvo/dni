@@ -31,23 +31,23 @@ False
 {
     "issues":[
         {
-            "type": "Missing check digit.",
+            "type": "Missing check letter.",
             "details": {
-                "correct_check_digit": "J"
+                "correct_check_letter": "J"
             }
         }
     ]
 }
 ```
 
-Get the check digit character for a DNI number:
+Get the check letter character for a DNI number:
 
 ```python
 >> > import dni
->> > dni.compute_check_digit("27592354")
+>> > dni.compute_check_letter("27592354")
 "J"
 
->> > dni.add_check_digit("27592354")
+>> > dni.add_check_letter("27592354")
 "27592354J"
 ```
 
@@ -57,7 +57,7 @@ Avoid primitive obsession with the DNI class. Get the components of the DNI, for
 >>> some_dni = dni.DNI("27592354J")
 >>> some_dni.number
 "27592354"
->>> some_dni.check_digit
+>>> some_dni.check_letter
 "J"
 
 >>>some_dni.format(upper=True, separator="-")
@@ -71,18 +71,18 @@ Avoid primitive obsession with the DNI class. Get the components of the DNI, for
 True
 ```
 
-Spot and solve missing or wrong check digit issues.
+Spot and solve missing or wrong check letter issues.
 ```python
->>> dni.check_digit_is_valid("27592354X")
+>>> dni.check_letter_is_valid("27592354X")
 False
 
->>> dni.has_check_digit("27592354")
+>>> dni.has_check_letter("27592354")
 False
 
->>> dni.add_or_fix_check_digit("27592354").format()
+>>> dni.add_or_fix_check_letter("27592354").format()
 "27592354J"
 
->>> dni.add_or_fix_check_digit("27592354X").format()
+>>> dni.add_or_fix_check_letter("27592354X").format()
 "27592354J"
 
 >>> DNI("27592354", fix_issues=True).format()

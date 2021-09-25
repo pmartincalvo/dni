@@ -6,13 +6,13 @@ class NoNumberFoundException(Exception):
 
 class MissingCheckDigitException(Exception):
     """
-    No check digit was found in the string.
+    No check letter was found in the string.
     """
 
 
 class InvalidCheckDigitException(Exception):
     """
-    The check digit does not match with the number.
+    The check letter does not match with the number.
     """
 
 
