@@ -395,6 +395,38 @@ def test_extract_numbers_with_no_number_raises_exception(text_with_no_dni):
         dni._extract_multiple_dni_numbers_from_string(text_with_no_dni)
 
 
+def test_contains_number_and_check_digit_on_valid_dni_returns_true(
+    dni_strings
+):
+
+    contain_numbers_and_check_digits = [
+        dni._contains_one_dni_number_and_check_digit(dni_string["valid"])
+        for dni_string in dni_strings
+    ]
+
+    all_are_true = all(contain_numbers_and_check_digits)
+
+    assert all_are_true
+
+
+def test_contains_number_and_check_digit_on_invalid_return_false(dni_strings):
+
+    all_sorts_of_invalid = [
+        dni_string["without_check_digit"] for dni_string in dni_strings
+    ] + [
+        dni_string["valid_check_digit_character"] for dni_string in dni_strings
+    ]
+
+    contain_numbers_and_check_digits = [
+        dni._contains_one_dni_number_and_check_digit(invalid_string)
+        for invalid_string in all_sorts_of_invalid
+    ]
+
+    all_are_false = not all(contain_numbers_and_check_digits)
+
+    assert all_are_false
+
+
 class TestDNI:
     def test_instantiate_dni_with_valids_works(self, dni_strings):
         dni_instances = [

@@ -87,6 +87,26 @@ def compute_check_digit(dni_number: str) -> str:
     return UPPERCASE_CHECK_DIGITS[int(dni_number) % 23]
 
 
+def _contains_one_dni_number_and_check_digit(a_string: str) -> bool:
+    """
+    Check if a string contains exactly one 8 digit number and a check digit.
+    The validity of the check digit is not checked.
+    :param a_string: the string that could contain a number and a check digit.
+    :return: True if so, False otherwise.
+    """
+    if not _contains_exactly_one_dni_number(a_string):
+        return False
+
+    has_check_digit_character = re.match(
+        f"{REGEX_FOR_8_DIGIT_NUMBER}.*{REGEX_FOR_UPPER_OR_LOWER_CHECK_DIGIT}",
+        a_string,
+    )
+    if not has_check_digit_character:
+        return False
+
+    return True
+
+
 def _contains_exactly_one_dni_number(a_string: str) -> bool:
     """
     Checks if a string contains exactly one 8 digit number.
