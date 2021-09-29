@@ -91,10 +91,11 @@ False
 
 
 Find one or more DNIs in text.
+
 ```python
->>> dni.contains_dni("El señor Forges, con DNI 12345678Z, sactamente.")
+>> > dni.text_contains_dni("El señor Forges, con DNI 12345678Z, sactamente.")
 True
 
->>> dni.extract_dnis("Mi DNI no es 12543456-S, es el 65412354-D.")
+>> > dni.extract_dnis_from_text("Mi DNI no es 12543456-S, es el 65412354-D.")
 
 ```

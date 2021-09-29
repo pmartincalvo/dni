@@ -191,6 +191,41 @@ def add_or_fix_check_letter(dni_or_number_string: str) -> str:
         return DNI(dni_or_number_string, fix_issues=True).format()
 
 
+def text_contains_dni(text: str) -> bool:
+    """
+    Check if a text contains or more DNI occurrences.
+    :param text: a text that may contain some or no DNI-valid substrings.
+    :return: True if so, False otherwise.
+    """
+    dni_matching_strings = re.findall(
+        REGEX_FOR_FULL_DNI_WITH_POSSIBLE_CLUTTER, text
+    )
+
+    if dni_matching_strings:
+        return True
+
+    return False
+
+
+def extract_dnis_from_text(text: str) -> List[DNI]:
+    """
+    Find DNI-valid substrings in a text and generate DNI instances from them.
+    :param text: a text that may contain some or no DNI-valid substrings.
+    :return: a list with the found DNIs as instances of the DNI class.
+    """
+
+    dni_matching_strings = re.findall(
+        REGEX_FOR_FULL_DNI_WITH_POSSIBLE_CLUTTER, text
+    )
+
+    found_dnis = [
+        DNI(number + check_letter)
+        for number, check_letter in dni_matching_strings
+    ]
+
+    return found_dnis
+
+
 def _look_for_issues_in_potential_dni_string(
     potential_dni_string: str
 ) -> None:

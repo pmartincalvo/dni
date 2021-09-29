@@ -280,7 +280,9 @@ def test_add_or_fix_check_letter_with_valids_returns_without_change(
 
 def test_add_or_fix_check_letter_with_missing_returns_fixed(dni_strings):
     fixed_dnis = [
-        dni.DNI(dni.add_or_fix_check_letter(dni_string["without_check_letter"]))
+        dni.DNI(
+            dni.add_or_fix_check_letter(dni_string["without_check_letter"])
+        )
         for dni_string in dni_strings
     ]
     valid_check_letters = [
@@ -302,7 +304,9 @@ def test_add_or_fix_check_letter_with_missing_returns_fixed(dni_strings):
 
 def test_add_or_fix_check_letter_with_wrong_returns_fixed(dni_strings):
     fixed_dnis = [
-        dni.DNI(dni.add_or_fix_check_letter(dni_string["with_wrong_check_letter"]))
+        dni.DNI(
+            dni.add_or_fix_check_letter(dni_string["with_wrong_check_letter"])
+        )
         for dni_string in dni_strings
     ]
     valid_check_letters = [
@@ -321,7 +325,10 @@ def test_add_or_fix_check_letter_with_wrong_returns_fixed(dni_strings):
 
     assert all_have_the_right_check_letter
 
-def test_add_or_fix_check_letter_with_random_strings_raises_exception(dni_lookalikes):
+
+def test_add_or_fix_check_letter_with_random_strings_raises_exception(
+    dni_lookalikes
+):
     for lookalike in dni_lookalikes:
         with pytest.raises(dni.NoNumberFoundException):
             dni.add_or_fix_check_letter(lookalike)
@@ -347,40 +354,31 @@ def test_compute_check_letter_with_valids_returns_same_character(dni_strings):
     assert all(computed_check_letter_is_valid)
 
 
-def test_add_check_letter_with_valids_returns_same_dni(dni_strings):
-    numbers = [
-        dni_string["without_check_letter"] for dni_string in dni_strings
-    ]
-    valid_dni = [dni_string["valid"] for dni_string in dni_strings]
-
-    computed_check_letter_is_valid = [
-        dni.add_check_letter(number) == valid_dni.upper()
-        for number, valid_dni in zip(numbers, valid_dni)
-    ]
-
-    assert all(computed_check_letter_is_valid)
-
-
 def test_contains_dni_with_a_dni_returns_true(text_with_two_dnis):
-    text_contains_dni = dni.contains_dni(text_with_two_dnis)
+    text_contains_dni = dni.text_contains_dni(text_with_two_dnis)
 
     assert text_contains_dni
 
 
 def test_contains_dni_without_a_dni_returns_false(text_with_no_dni):
-    text_contains_no_dni = not dni.contains_dni(text_with_no_dni)
+    text_contains_no_dni = not dni.text_contains_dni(text_with_no_dni)
 
     assert text_contains_no_dni
 
 
 def test_extract_dnis_with_two_dnis_returns_two_dnis(text_with_two_dnis):
-    extracted_dnis = dni.extract_dnis(text_with_two_dnis)
+    extracted_dnis = dni.extract_dnis_from_text(text_with_two_dnis)
 
-    assert False  # TODO use DNI class here when implemented
+    two_elements_found = len(extracted_dnis) == 2
+    both_are_dni_instances = all(
+        [isinstance(dni_wannabe, dni.DNI) for dni_wannabe in extracted_dnis]
+    )
+
+    assert two_elements_found and both_are_dni_instances
 
 
-def test_extract_dnis_without_a_dni_returns_none(text_with_two_dnis):
-    assert dni.extract_dnis(text_with_no_dni) == None
+def test_extract_dnis_without_a_dni_returns_empty_list(text_with_no_dni):
+    assert dni.extract_dnis_from_text(text_with_no_dni) == []
 
 
 def test_extract_number_from_string_that_contains_it_extracts_succesfully(
