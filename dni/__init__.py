@@ -115,6 +115,24 @@ class DNI:
         return self.number + separator + self.check_letter.lower()
 
 
+def is_valid(potential_dni_string: str) -> bool:
+    """
+    Check if a string contains a valid DNI.
+    :param potential_dni_string: the string that may contain a valid DNI.
+    :return: True if so, False otherwise.
+    """
+
+    try:
+        DNI(potential_dni_string)
+        return True
+    except (
+        NoNumberFoundException,
+        MissingCheckDigitException,
+        InvalidCheckDigitException,
+    ):
+        return False
+
+
 def compute_check_letter(dni_number: str) -> str:
     """
     Given a DNI number, obtain the correct check letter.
