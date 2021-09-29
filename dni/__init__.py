@@ -143,10 +143,27 @@ def check_letter_is_valid(potential_dni_string: str) -> bool:
 
     try:
         _look_for_issues_in_potential_dni_string(potential_dni_string)
+        return True
     except InvalidCheckDigitException:
         return False
 
-    return True
+
+def has_check_letter(potential_dni_string: str) -> bool:
+    """
+    Check if the DNI string has a check letter. Will raise an exception if the
+    string does not, at least, match a DNI number. Does not check the validity
+    of the check letter if one is found.
+    :param potential_dni_string: the string that may contain a DNI.
+    :return: True if so, False otherwise.
+    """
+
+    try:
+        _look_for_issues_in_potential_dni_string(potential_dni_string)
+        return True
+    except MissingCheckDigitException:
+        return False
+    except InvalidCheckDigitException:
+        return True
 
 
 def compute_check_letter(dni_number: str) -> str:

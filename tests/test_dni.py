@@ -252,6 +252,12 @@ def test_has_check_letter_with_invalids_returns_false(dni_strings):
     assert all_validations_returned_false
 
 
+def test_has_check_letter_with_random_strings_raises_exception(dni_lookalikes):
+    for lookalike in dni_lookalikes:
+        with pytest.raises(dni.NoNumberFoundException):
+            dni.has_check_letter(lookalike)
+
+
 def test_add_or_fix_check_letter_with_valids_returns_without_change(
     dni_strings
 ):
