@@ -206,7 +206,7 @@ def test_check_letter_is_valid_with_valids_returns_true(dni_strings):
 
 def test_check_letter_is_valid_with_wrongs_returns_false(dni_strings):
     validation_results = [
-        dni.check_letter_is_valid(dni_string["wrong_check_letter"])
+        dni.check_letter_is_valid(dni_string["with_wrong_check_letter"])
         for dni_string in dni_strings
     ]
 
@@ -219,8 +219,16 @@ def test_check_letter_is_valid_without_check_letter_raises_exception(
     dni_strings
 ):
     for dni_string in dni_strings:
-        with pytest.raises(ValueError):
+        with pytest.raises(dni.MissingCheckDigitException):
             dni.check_letter_is_valid(dni_string["without_check_letter"])
+
+
+def test_check_letter_is_valid_with_random_string_raises_exception(
+    dni_lookalikes
+):
+    for lookalike in dni_lookalikes:
+        with pytest.raises(dni.NoNumberFoundException):
+            dni.check_letter_is_valid(lookalike)
 
 
 def test_has_check_letter_with_valids_returns_true(dni_strings):

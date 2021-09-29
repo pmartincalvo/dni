@@ -118,7 +118,7 @@ class DNI:
 def is_valid(potential_dni_string: str) -> bool:
     """
     Check if a string contains a valid DNI.
-    :param potential_dni_string: the string that may contain a valid DNI.
+    :param potential_dni_string: the string that may contain a DNI.
     :return: True if so, False otherwise.
     """
 
@@ -131,6 +131,22 @@ def is_valid(potential_dni_string: str) -> bool:
         InvalidCheckDigitException,
     ):
         return False
+
+
+def check_letter_is_valid(potential_dni_string: str) -> bool:
+    """
+    Check if the check letter of a DNI string is valid. Will raise an exception
+    if the string is not a complete DNI.
+    :param potential_dni_string: the string that may contain a DNI.
+    :return: True if so, False otherwise.
+    """
+
+    try:
+        _look_for_issues_in_potential_dni_string(potential_dni_string)
+    except InvalidCheckDigitException:
+        return False
+
+    return True
 
 
 def compute_check_letter(dni_number: str) -> str:
