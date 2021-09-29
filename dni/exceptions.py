@@ -4,13 +4,13 @@ class NoNumberFoundException(Exception):
     """
 
 
-class MissingCheckDigitException(Exception):
+class MissingCheckLetterException(Exception):
     """
     No check letter was found in the string.
     """
 
 
-class InvalidCheckDigitException(Exception):
+class InvalidCheckLetterException(Exception):
     """
     The check letter does not match with the number.
     """

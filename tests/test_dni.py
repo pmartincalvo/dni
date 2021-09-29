@@ -219,7 +219,7 @@ def test_check_letter_is_valid_without_check_letter_raises_exception(
     dni_strings
 ):
     for dni_string in dni_strings:
-        with pytest.raises(dni.MissingCheckDigitException):
+        with pytest.raises(dni.MissingCheckLetterException):
             dni.check_letter_is_valid(dni_string["without_check_letter"])
 
 
@@ -280,7 +280,7 @@ def test_add_or_fix_check_letter_with_valids_returns_without_change(
 
 def test_add_or_fix_check_letter_with_missing_returns_fixed(dni_strings):
     fixed_dnis = [
-        dni.add_or_fix_check_letter(dni_string["without_check_letter"])
+        dni.DNI(dni.add_or_fix_check_letter(dni_string["without_check_letter"]))
         for dni_string in dni_strings
     ]
     valid_check_letters = [
@@ -300,9 +300,9 @@ def test_add_or_fix_check_letter_with_missing_returns_fixed(dni_strings):
     assert all_have_the_right_check_letter
 
 
-def test_add_or_fix_check_letter_with_wrong_returns_fixed(self):
+def test_add_or_fix_check_letter_with_wrong_returns_fixed(dni_strings):
     fixed_dnis = [
-        dni.add_or_fix_check_letter(dni_string["wrong_check_letter"])
+        dni.DNI(dni.add_or_fix_check_letter(dni_string["with_wrong_check_letter"]))
         for dni_string in dni_strings
     ]
     valid_check_letters = [
@@ -320,6 +320,11 @@ def test_add_or_fix_check_letter_with_wrong_returns_fixed(self):
     )
 
     assert all_have_the_right_check_letter
+
+def test_add_or_fix_check_letter_with_random_strings_raises_exception(dni_lookalikes):
+    for lookalike in dni_lookalikes:
+        with pytest.raises(dni.NoNumberFoundException):
+            dni.add_or_fix_check_letter(lookalike)
 
 
 def test_compute_check_letter_with_valids_returns_same_character(dni_strings):
@@ -472,7 +477,7 @@ def test_extract_check_letter_on_invalid_raises_exception(dni_lookalikes):
         with pytest.raises(
             (
                 dni.NoNumberFoundException,
-                dni.MissingCheckDigitException,
+                dni.MissingCheckLetterException,
                 dni.MultipleMatchesException,
             )
         ):
@@ -515,14 +520,14 @@ class TestDNI:
         self, dni_strings
     ):
         for dni_string in dni_strings:
-            with pytest.raises(dni.MissingCheckDigitException):
+            with pytest.raises(dni.MissingCheckLetterException):
                 dni.DNI(dni_string["without_check_letter"])
 
     def test_instantiate_dni_with_wrong_check_letters_raises_error(
         self, dni_strings
     ):
         for dni_string in dni_strings:
-            with pytest.raises(dni.InvalidCheckDigitException):
+            with pytest.raises(dni.InvalidCheckLetterException):
                 dni.DNI(dni_string["with_wrong_check_letter"])
 
     def test_instantiate_dni_without_check_letters_with_fix_issues_works(
@@ -546,8 +551,8 @@ class TestDNI:
             with pytest.raises(
                 (
                     dni.NoNumberFoundException,
-                    dni.MissingCheckDigitException,
-                    dni.InvalidCheckDigitException,
+                    dni.MissingCheckLetterException,
+                    dni.InvalidCheckLetterException,
                 )
             ):
                 dni.DNI(lookalike)

@@ -13,8 +13,8 @@ from .constants import (
 )
 from .exceptions import (
     MultipleMatchesException,
-    InvalidCheckDigitException,
-    MissingCheckDigitException,
+    InvalidCheckLetterException,
+    MissingCheckLetterException,
     NoNumberFoundException,
 )
 
@@ -37,15 +37,15 @@ class DNI:
                 potentiaL_dni_string
             ).upper()
         except (
-            MissingCheckDigitException,
-            InvalidCheckDigitException,
+            MissingCheckLetterException,
+            InvalidCheckLetterException,
         ) as check_letter_issue:
             if not fix_issues:
                 raise check_letter_issue
             number = self._dni = _extract_exactly_one_dni_number_from_string(
                 potentiaL_dni_string
             )
-            valid_check_letter = compute_check_letter(potentiaL_dni_string)
+            valid_check_letter = compute_check_letter(number)
             self._dni = number + valid_check_letter.upper()
 
     @property
@@ -81,8 +81,8 @@ class DNI:
             try:
                 other = DNI(other)
             except (
-                MissingCheckDigitException,
-                InvalidCheckDigitException,
+                MissingCheckLetterException,
+                InvalidCheckLetterException,
                 NoNumberFoundException,
             ):
                 return False
@@ -127,8 +127,8 @@ def is_valid(potential_dni_string: str) -> bool:
         return True
     except (
         NoNumberFoundException,
-        MissingCheckDigitException,
-        InvalidCheckDigitException,
+        MissingCheckLetterException,
+        InvalidCheckLetterException,
     ):
         return False
 
@@ -144,7 +144,7 @@ def check_letter_is_valid(potential_dni_string: str) -> bool:
     try:
         _look_for_issues_in_potential_dni_string(potential_dni_string)
         return True
-    except InvalidCheckDigitException:
+    except InvalidCheckLetterException:
         return False
 
 
@@ -160,9 +160,9 @@ def has_check_letter(potential_dni_string: str) -> bool:
     try:
         _look_for_issues_in_potential_dni_string(potential_dni_string)
         return True
-    except MissingCheckDigitException:
+    except MissingCheckLetterException:
         return False
-    except InvalidCheckDigitException:
+    except InvalidCheckLetterException:
         return True
 
 
@@ -174,6 +174,21 @@ def compute_check_letter(dni_number: str) -> str:
     string.
     """
     return UPPERCASE_CHECK_LETTERS[int(dni_number) % 23]
+
+
+def add_or_fix_check_letter(dni_or_number_string: str) -> str:
+    """
+    Add the right letter to a DNI number, or replace the existing one if it is
+    not valid. DNIs without issues will return unchanged.
+    :param dni_or_number_string: the string that contains a complete DNI or a
+    DNI number without the check letter.
+    :return: the DNI number with the valid check letter.
+    """
+    try:
+        _look_for_issues_in_potential_dni_string(dni_or_number_string)
+        return dni_or_number_string  # If no exception, nothing to change
+    except (MissingCheckLetterException, InvalidCheckLetterException):
+        return DNI(dni_or_number_string, fix_issues=True).format()
 
 
 def _look_for_issues_in_potential_dni_string(
@@ -197,7 +212,7 @@ def _look_for_issues_in_potential_dni_string(
         potential_dni_string
     )
     if not has_check_letter_character:
-        raise MissingCheckDigitException(
+        raise MissingCheckLetterException(
             f"String does not contain the check letter character: {potential_dni_string}"
         )
 
@@ -212,7 +227,7 @@ def _look_for_issues_in_potential_dni_string(
     )
 
     if not check_letter_character_is_valid:
-        raise InvalidCheckDigitException(
+        raise InvalidCheckLetterException(
             f"Check letter in string does not correspond to number: {check_letter_character}"
         )
 
