@@ -1,3 +1,4 @@
+import csv
 import re
 
 import pytest
@@ -566,13 +567,23 @@ class TestDNI:
         a_dni = dni.DNI("27592354J")
 
         assert (
-            (a_dni.format(lower=True) == "27592354j")
-            and (a_dni.format(upper=True) == "27592354J")
-            and (a_dni.format(lower=True, separator="$") == "27592354$j")
+            (a_dni.format() == "27592354J")
+            and (a_dni.format(case="lower") == "27592354j")
+            and (a_dni.format(case="upper") == "27592354J")
+            and (a_dni.format(case="lower", separator="$") == "27592354$j")
         )
 
     def test_equality_works(self):
         assert dni.DNI("27592354J") == dni.DNI("27592354J")
 
+    def test_equality_works_with_string(self):
+        assert dni.DNI("27592354J") == "27592354J"
+
     def test_inequality_works(self):
         assert dni.DNI("27592354J") != dni.DNI("12365487c")
+
+    def test_inequality_works_with_string(self):
+        assert dni.DNI("27592354J") != "12365487c"
+
+    def test_inequality_works_with_random_stuff(self):
+        assert dni.DNI("27592354J") != csv.reader
