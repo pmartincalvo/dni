@@ -26,18 +26,20 @@ False
 >>> dni.is_valid("ABC123XYZ")
 False
 
->>> # Get objects with issue details.
->>> dni.issues("27592354")
+>>> # Get details on .
+>>> try:
+>>>     dni.DNI("27592354-?")
+>>> except MissingCheckLetterException as exc:
+>>>     print(exc.render_as_dict())
 {
-    "issues":[
-        {
-            "type": "Missing check letter.",
-            "details": {
-                "correct_check_letter": "J"
-            }
-        }
-    ]
+    'type': 'missing_check_letter',
+    'details': {
+        'message': "Could not find the check letter corresponding to number '27592354'.", 
+        'string': '27592354-?', 
+        'number': '27592354'
+    }
 }
+
 ```
 
 Get the check letter character for a DNI number:

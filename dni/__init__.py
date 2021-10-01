@@ -32,7 +32,9 @@ class DNI:
         :param fix_issues: whether to fix check letter issues if found.
         """
         try:
-            _look_for_issues_in_potential_dni_string(potentiaL_dni_string)
+            _search_and_raise_issues_with_potential_dni_string(
+                potentiaL_dni_string
+            )
             self._dni = _remove_clutter_from_potential_dni_string(
                 potentiaL_dni_string
             ).upper()
@@ -142,7 +144,9 @@ def check_letter_is_valid(potential_dni_string: str) -> bool:
     """
 
     try:
-        _look_for_issues_in_potential_dni_string(potential_dni_string)
+        _search_and_raise_issues_with_potential_dni_string(
+            potential_dni_string
+        )
         return True
     except InvalidCheckLetterException:
         return False
@@ -158,7 +162,9 @@ def has_check_letter(potential_dni_string: str) -> bool:
     """
 
     try:
-        _look_for_issues_in_potential_dni_string(potential_dni_string)
+        _search_and_raise_issues_with_potential_dni_string(
+            potential_dni_string
+        )
         return True
     except MissingCheckLetterException:
         return False
@@ -185,7 +191,9 @@ def add_or_fix_check_letter(dni_or_number_string: str) -> str:
     :return: the DNI number with the valid check letter.
     """
     try:
-        _look_for_issues_in_potential_dni_string(dni_or_number_string)
+        _search_and_raise_issues_with_potential_dni_string(
+            dni_or_number_string
+        )
         return dni_or_number_string  # If no exception, nothing to change
     except (MissingCheckLetterException, InvalidCheckLetterException):
         return DNI(dni_or_number_string, fix_issues=True).format()
@@ -226,7 +234,7 @@ def extract_dnis_from_text(text: str) -> List[DNI]:
     return found_dnis
 
 
-def _look_for_issues_in_potential_dni_string(
+def _search_and_raise_issues_with_potential_dni_string(
     potential_dni_string: str
 ) -> None:
     """
@@ -239,31 +247,33 @@ def _look_for_issues_in_potential_dni_string(
         potential_dni_string
     )
     if not has_8_letter_number:
-        raise NoNumberFoundException(
-            f"Could not find a potential DNI number in string: {potential_dni_string}"
-        )
+        raise NoNumberFoundException(string=potential_dni_string)
+
+    number = _extract_exactly_one_dni_number_from_string(potential_dni_string)
 
     has_check_letter_character = _contains_one_dni_number_and_check_letter(
         potential_dni_string
     )
     if not has_check_letter_character:
         raise MissingCheckLetterException(
-            f"String does not contain the check letter character: {potential_dni_string}"
+            string=potential_dni_string, number=number
         )
 
-    check_letter_character = _extract_exactly_one_check_letter_from_string(
+    found_check_letter_character = _extract_exactly_one_check_letter_from_string(
         potential_dni_string
     ).upper()
+
+    valid_check_letter = compute_check_letter(number)
     check_letter_character_is_valid = (
-        check_letter_character
-        == compute_check_letter(
-            _extract_exactly_one_dni_number_from_string(potential_dni_string)
-        )
+        found_check_letter_character == valid_check_letter
     )
 
     if not check_letter_character_is_valid:
         raise InvalidCheckLetterException(
-            f"Check letter in string does not correspond to number: {check_letter_character}"
+            string=potential_dni_string,
+            number=number,
+            invalid_check_letter=found_check_letter_character,
+            valid_check_letter=valid_check_letter,
         )
 
 
@@ -294,7 +304,7 @@ def _extract_exactly_one_check_letter_from_string(a_string: str) -> str:
     :return: the check letter found in the string.
     """
     if not _contains_one_dni_number_and_check_letter(a_string):
-        _look_for_issues_in_potential_dni_string(a_string)
+        _search_and_raise_issues_with_potential_dni_string(a_string)
 
     return re.findall(REGEX_FOR_FULL_DNI_WITH_POSSIBLE_CLUTTER, a_string)[0][1]
     # Get first result and get second capture group, which is the one for the
