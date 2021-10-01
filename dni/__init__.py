@@ -16,6 +16,7 @@ from .exceptions import (
     InvalidCheckLetterException,
     MissingCheckLetterException,
     NoNumberFoundException,
+    DNIExceptionDetails,
 )
 
 
@@ -38,12 +39,11 @@ class DNI:
             self._dni = _remove_clutter_from_potential_dni_string(
                 potentiaL_dni_string
             ).upper()
-        except (
-            MissingCheckLetterException,
-            InvalidCheckLetterException,
-        ) as check_letter_issue:
+        except (MissingCheckLetterException, InvalidCheckLetterException):
             if not fix_issues:
-                raise check_letter_issue
+                _search_and_raise_issues_with_potential_dni_string(
+                    potentiaL_dni_string
+                )  # Call it again but let it raise this time
             number = self._dni = _extract_exactly_one_dni_number_from_string(
                 potentiaL_dni_string
             )
@@ -247,7 +247,9 @@ def _search_and_raise_issues_with_potential_dni_string(
         potential_dni_string
     )
     if not has_8_letter_number:
-        raise NoNumberFoundException(string=potential_dni_string)
+        raise NoNumberFoundException(
+            DNIExceptionDetails(string=potential_dni_string)
+        )
 
     number = _extract_exactly_one_dni_number_from_string(potential_dni_string)
 
@@ -256,7 +258,7 @@ def _search_and_raise_issues_with_potential_dni_string(
     )
     if not has_check_letter_character:
         raise MissingCheckLetterException(
-            string=potential_dni_string, number=number
+            DNIExceptionDetails(string=potential_dni_string, number=number)
         )
 
     found_check_letter_character = _extract_exactly_one_check_letter_from_string(
@@ -270,10 +272,12 @@ def _search_and_raise_issues_with_potential_dni_string(
 
     if not check_letter_character_is_valid:
         raise InvalidCheckLetterException(
-            string=potential_dni_string,
-            number=number,
-            invalid_check_letter=found_check_letter_character,
-            valid_check_letter=valid_check_letter,
+            DNIExceptionDetails(
+                string=potential_dni_string,
+                number=number,
+                invalid_check_letter=found_check_letter_character,
+                valid_check_letter=valid_check_letter,
+            )
         )
 
 
@@ -338,7 +342,9 @@ def _extract_exactly_one_dni_number_from_string(
         string_that_contains_dni_number
     )
     if not results:
-        raise NoNumberFoundException()
+        raise NoNumberFoundException(
+            DNIExceptionDetails(string=string_that_contains_dni_number)
+        )
     if len(results) > 1:
         raise MultipleMatchesException()
 
@@ -361,7 +367,9 @@ def _extract_multiple_dni_numbers_from_string(
         REGEX_FOR_8_DIGIT_NUMBER, string_that_contains_dni_numbers
     )
     if not results:
-        raise NoNumberFoundException()
+        raise NoNumberFoundException(
+            DNIExceptionDetails(string=string_that_contains_dni_numbers)
+        )
 
     return results
 

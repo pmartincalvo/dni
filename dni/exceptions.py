@@ -1,9 +1,42 @@
-class DNIException(Exception):
-    def __init__(self, *args, **kwargs):
-        pass
+from collections import namedtuple
 
-    def render_as_dict(self):
-        return {"type": self.description, "details": self.details}
+DNIExceptionDetails = namedtuple(
+    "DNIExceptionDetails",
+    field_names=[
+        "message",
+        "string",
+        "number",
+        "invalid_check_letter",
+        "valid_check_letter",
+    ],
+)
+DNIExceptionDetails.__new__.__defaults__ = (None,) * len(
+    DNIExceptionDetails._fields
+)  # Default None values
+
+
+class DNIException(Exception):
+    """
+    Shared behaviour for custom defined exceptions in the DNI package.
+    """
+
+    description = None
+
+    def __init__(self, message):
+        """
+        Init base class.
+        """
+        super().__init__(message)
+        self.details_to_render = None
+
+    def render_as_dict(self) -> dict:
+        """
+        Generate a dictionary indicating the exception description and a
+        flexible details section.
+        :return: the dictionary with the specific details of the raised
+        exception.
+        """
+        return {"type": self.description, "details": self.details_to_render}
 
 
 class NoNumberFoundException(DNIException):
@@ -13,14 +46,19 @@ class NoNumberFoundException(DNIException):
 
     description = "missing_dni_number"
 
-    def __init__(self, message: str = None, string: str = None):
-        if message is None:
-            message = f"Could not find a DNI number in: '{string}'"
+    def __init__(self, exception_details: DNIExceptionDetails):
+        self.details = exception_details
+        self.message = exception_details.message
+        if self.message is None:
+            self.message = (
+                f"Could not find a DNI number in: '{exception_details.string}'"
+            )
+        self.details_to_render = {
+            "message": self.message,
+            "string": self.details.string,
+        }
 
-        super().__init__(message)
-        self.message = message
-        self.string = string
-        self.details = {"message": message, "string": string}
+        super().__init__(self.message)
 
 
 class MissingCheckLetterException(DNIException):
@@ -30,20 +68,22 @@ class MissingCheckLetterException(DNIException):
 
     description = "missing_check_letter"
 
-    def __init__(
-        self, message: str = None, string: str = None, number: str = None
-    ):
-        if message is None:
-            message = (
+    def __init__(self, exception_details: DNIExceptionDetails):
+        self.details = exception_details
+        self.message = exception_details.message
+        if self.message is None:
+            self.message = (
                 f"Could not find the check letter corresponding to number"
-                f" '{number}'."
+                f" '{self.details.number}'."
             )
 
-        super().__init__(message)
-        self.message = message
-        self.string = string
-        self.number = number
-        self.details = {"message": message, "string": string, "number": number}
+        super().__init__(self.message)
+
+        self.details_to_render = {
+            "message": self.message,
+            "string": self.details.string,
+            "number": self.details.number,
+        }
 
 
 class InvalidCheckLetterException(DNIException):
@@ -53,32 +93,24 @@ class InvalidCheckLetterException(DNIException):
 
     description = "invalid_check_letter"
 
-    def __init__(
-        self,
-        message: str = None,
-        string: str = None,
-        number: str = None,
-        invalid_check_letter: str = None,
-        valid_check_letter: str = None,
-    ):
-        if message is None:
-            message = (
-                f"Found check letter '{invalid_check_letter}' is not the"
-                f" valid check letter for found number '{number}'."
+    def __init__(self, exception_details: DNIExceptionDetails):
+        self.details = exception_details
+        self.message = self.details.message
+        if self.message is None:
+            self.message = (
+                f"Found check letter '{self.details.invalid_check_letter}' is not the"
+                f" valid check letter for found number '{self.details.number}'."
             )
 
-        super().__init__(message)
-        self.message = message
-        self.string = string
-        self.number = number
-        self.invalid_check_letter = invalid_check_letter
-        self.details = {
-            "message": message,
-            "string": string,
-            "found_number": number,
-            "invalid_check_letter": invalid_check_letter,
-            "valid_check_letter": valid_check_letter,
+        self.details_to_render = {
+            "message": self.details.message,
+            "string": self.details.string,
+            "found_number": self.details.number,
+            "invalid_check_letter": self.details.invalid_check_letter,
+            "valid_check_letter": self.details.valid_check_letter,
         }
+
+        super().__init__(self.message)
 
 
 class MultipleMatchesException(Exception):
