@@ -2,6 +2,7 @@ from typing import List
 
 import re
 
+from ._version import __version__
 from .constants import (
     UPPERCASE_CHECK_LETTERS,
     LOWERCASE_CHECK_LETTERS,
@@ -23,15 +24,12 @@ from .exceptions import (
 class DNI:
     """
     A DNI.
+
+    :param potentiaL_dni_string: the string that may contain a DNI.
+    :param fix_issues: whether to fix check letter issues if found.
     """
 
     def __init__(self, potentiaL_dni_string: str, fix_issues: bool = False):
-        """
-        Try to infer a DNI from a string. Optionally, if the check letter is
-        wrong or missing, fix it.
-        :param potentiaL_dni_string: the string that may contain a DNI.
-        :param fix_issues: whether to fix check letter issues if found.
-        """
         try:
             _search_and_raise_issues_with_potential_dni_string(
                 potentiaL_dni_string
@@ -54,6 +52,7 @@ class DNI:
     def number(self) -> str:
         """
         Get the number part of the DNI.
+
         :return: the number.
         """
         return self._dni[:8]
@@ -62,6 +61,7 @@ class DNI:
     def check_letter(self) -> str:
         """
         Get the check letter of the DNI.
+
         :return: the check letter.
         """
         return self._dni[-1]
@@ -71,6 +71,7 @@ class DNI:
         Check equality by comparing to another DNI instance. If a string is
         passed, an attempt will be made to turn it into a DNI to execute the
         comparison.
+
         :param other: a DNI instance, or a string that could be a DNI.
         :return: True if equal, False otherwise.
         """
@@ -98,12 +99,19 @@ class DNI:
 
         return both_are_same_dni
 
+    def __str__(self):
+        return self.format()
+
+    def __repr__(self):
+        return f"DNI('{self.format()}')"
+
     def format(self, case: str = "upper", separator: str = "") -> str:
         """
         Get a string representation of the DNI, with some formatting options.
+
         :param case: whether to put the check letter in upper or lower case.
         :param separator: an option seperator string to put between the number
-        and the check letter.
+         and the check letter.
         :return: a string with the DNI, formatted as defined.
         """
         if case not in ("upper", "lower"):
@@ -120,6 +128,7 @@ class DNI:
 def is_valid(potential_dni_string: str) -> bool:
     """
     Check if a string contains a valid DNI.
+
     :param potential_dni_string: the string that may contain a DNI.
     :return: True if so, False otherwise.
     """
@@ -139,6 +148,7 @@ def check_letter_is_valid(potential_dni_string: str) -> bool:
     """
     Check if the check letter of a DNI string is valid. Will raise an exception
     if the string is not a complete DNI.
+
     :param potential_dni_string: the string that may contain a DNI.
     :return: True if so, False otherwise.
     """
@@ -157,6 +167,7 @@ def has_check_letter(potential_dni_string: str) -> bool:
     Check if the DNI string has a check letter. Will raise an exception if the
     string does not, at least, match a DNI number. Does not check the validity
     of the check letter if one is found.
+
     :param potential_dni_string: the string that may contain a DNI.
     :return: True if so, False otherwise.
     """
@@ -175,9 +186,10 @@ def has_check_letter(potential_dni_string: str) -> bool:
 def compute_check_letter(dni_number: str) -> str:
     """
     Given a DNI number, obtain the correct check letter.
+
     :param dni_number: a valid dni number.
     :return: the check letter for the number as an uppercase, single character
-    string.
+     string.
     """
     return UPPERCASE_CHECK_LETTERS[int(dni_number) % 23]
 
@@ -186,8 +198,9 @@ def add_or_fix_check_letter(dni_or_number_string: str) -> str:
     """
     Add the right letter to a DNI number, or replace the existing one if it is
     not valid. DNIs without issues will return unchanged.
+
     :param dni_or_number_string: the string that contains a complete DNI or a
-    DNI number without the check letter.
+     DNI number without the check letter.
     :return: the DNI number with the valid check letter.
     """
     try:
@@ -202,6 +215,7 @@ def add_or_fix_check_letter(dni_or_number_string: str) -> str:
 def text_contains_dni(text: str) -> bool:
     """
     Check if a text contains or more DNI occurrences.
+
     :param text: a text that may contain some or no DNI-valid substrings.
     :return: True if so, False otherwise.
     """
@@ -218,6 +232,7 @@ def text_contains_dni(text: str) -> bool:
 def extract_dnis_from_text(text: str) -> List[DNI]:
     """
     Find DNI-valid substrings in a text and generate DNI instances from them.
+
     :param text: a text that may contain some or no DNI-valid substrings.
     :return: a list with the found DNIs as instances of the DNI class.
     """
@@ -240,6 +255,7 @@ def _search_and_raise_issues_with_potential_dni_string(
     """
     Parse a string to see if it contains a DNI. If not, raise an exception
     specifying why the string is not a valid DNI.
+
     :param potential_dni_string: the string that may contain a DNI.
     :return: None
     """
@@ -285,6 +301,7 @@ def _contains_one_dni_number_and_check_letter(a_string: str) -> bool:
     """
     Check if a string contains exactly one 8 letter number and a check letter.
     The validity of the check letter is not checked.
+
     :param a_string: the string that could contain a number and a check letter.
     :return: True if so, False otherwise.
     """
@@ -304,6 +321,7 @@ def _extract_exactly_one_check_letter_from_string(a_string: str) -> str:
     """
     Extracts the check letter out of string that could be a DNI. Will raise an
     exception if the string does not represnt a DNI.
+
     :param a_string: the string that contains the check letter.
     :return: the check letter found in the string.
     """
@@ -318,6 +336,7 @@ def _extract_exactly_one_check_letter_from_string(a_string: str) -> str:
 def _contains_exactly_one_dni_number(a_string: str) -> bool:
     """
     Checks if a string contains exactly one 8 letter number.
+
     :param a_string: the string that could contain a number.
     :return: True if so, False otherwise.
     """
@@ -334,8 +353,9 @@ def _extract_exactly_one_dni_number_from_string(
     """
     Extracts a number with exactly 8 letters from a string. Raises an exception
     if the string does not contain such a number or contains more than one.
+
     :param string_that_contains_dni_number: the string that contains the
-    number.
+     number.
     :return: the number in string form.
     """
     results = _extract_multiple_dni_numbers_from_string(
@@ -358,8 +378,9 @@ def _extract_multiple_dni_numbers_from_string(
     Extracts all occurences of 8 letter numbers in the string. Raises an
     exception if the string does not contain such a number or contains more
     than one.
+
     :param string_that_contains_dni_numbers: the string that contains some
-    nubmers.
+     numbers.
     :return: a list with the found numbers.
     """
 
@@ -378,9 +399,10 @@ def _remove_clutter_from_potential_dni_string(a_string: str) -> str:
     """
     Removes all characters that are not part of the valid characters for a DNI
     from a string.
+
     :param a_string: the string to remove the characters from.
     :return: the same string, without any character that is not a valid DNI
-    character.
+     character.
     """
     string_without_clutter = re.sub(REGEX_FOR_NOT_A_DNI_CHAR, "", a_string)
 

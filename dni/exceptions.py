@@ -33,6 +33,7 @@ class DNIException(Exception):
         """
         Generate a dictionary indicating the exception description and a
         flexible details section.
+
         :return: the dictionary with the specific details of the raised
         exception.
         """
