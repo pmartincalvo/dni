@@ -20,6 +20,19 @@ from .exceptions import (
     DNIExceptionDetails,
 )
 
+__all__ = [
+    "DNI",
+    "is_valid",
+    "has_check_letter",
+    "compute_check_letter",
+    "add_or_fix_check_letter",
+    "text_contains_dni",
+    "extract_dnis_from_text",
+    "MissingCheckLetterException",
+    "InvalidCheckLetterException",
+    "NoNumberFoundException",
+]
+
 
 class DNI:
     """

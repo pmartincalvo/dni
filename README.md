@@ -1,5 +1,5 @@
 # dni
-Simple DNI class and operations to make your life easier.
+Simple DNI class and operations to make your life easier with Spanish Ids.
 
 ```python
 >>> import dni
@@ -7,7 +7,7 @@ Simple DNI class and operations to make your life easier.
 >>> dni.is_valid("27592354J")
 True
 
->>> # Not a DNI.
+>>> # Not a DNI.to make your life easier with Spanish Ids.
 >>> dni.is_valid("ABC123XYZ")
 False
 
@@ -41,6 +41,7 @@ $ pip install dni`
 
 ## Features
 
+- Applies for Spanish DNI IDs.
 - Check validity of DNIs.
 - Get check letter for a DNI number.
 - Avoid primitive obsession with the DNI class. Get the components of the DNI, 
@@ -48,11 +49,13 @@ $ pip install dni`
 - Find and extract multiple DNIs from text.
 - Get detailed exceptions when a string has issues (see #TODO link).
 
-For an extensive compilation of usage examples, check the quickstart in the docs. #TODO add link
 
+## Docs
+
+- For an extensive compilation of usage examples, check the quickstart in the docs. #TODO add link
+- You can find here the API reference. #TODO Add link
 
 ## Misc
 
 - If you spot a bug or want to request a feature, feel free to open an issue in
   this repository.
-- 
