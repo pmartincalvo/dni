@@ -12,7 +12,7 @@ DNIExceptionDetails = namedtuple(
 )
 DNIExceptionDetails.__new__.__defaults__ = (None,) * len(
     DNIExceptionDetails._fields
-)  # Default None values
+)  # Default None values, required for campatibility with Python < 3.7.
 
 
 class DNIException(Exception):
