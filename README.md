@@ -22,7 +22,7 @@ False
 >>> some_dni.check_letter
 "J"
 
->>>some_dni.format(upper=True, separator="-")
+>>> some_dni.format(case="upper", separator="-")
 "27592354-J"
 
 >>> dni.DNI("27592354J") == dni.DNI("27592354-j")
@@ -55,9 +55,9 @@ $ pip install dni`
 ## Docs
 
 - For an extensive compilation of usage examples, check the
-  [quickstart](https://dni.readthedocs.io/en/latest/quickstart.html) 
+  [quickstart](https://dni.readthedocs.io/en/0.1.0/quickstart.html) 
   in the docs.
-- You can also check the full [API reference](https://dni.readthedocs.io/en/latest/api_reference.html).
+- You can also check the full [API reference](https://dni.readthedocs.io/en/0.1.0/api_reference.html).
 
 ## Misc
 

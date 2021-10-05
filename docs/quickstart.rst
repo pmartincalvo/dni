@@ -59,9 +59,9 @@ Avoid primitive obsession with the DNI class. Get the components of the DNI, for
     >>> some_dni.check_letter
     "J"
 
-    >>> some_dni.format(upper=True, separator="-")
+    >>> some_dni.format(case="upper", separator="-")
     "27592354-J"
-    >>> some_dni.format(lower=True, separator="+++")
+    >>> some_dni.format(case="lower", separator="+++")
     "27592354+++j"
     >>> str(some_dni)
     "27592354J"
@@ -87,7 +87,7 @@ Spot and solve missing or wrong check letter issues.
     >>> dni.add_or_fix_check_letter("27592354X").format()
     "27592354J"
 
-    >>> DNI("27592354", fix_issues=True).format()
+    >>> dni.DNI("27592354", fix_issues=True).format()
     "27592354J"
 
 Find one or more DNIs in text.
@@ -108,7 +108,7 @@ Get details when things go wrong.
 
     >>> try:
     >>>     dni.DNI("27592354-?")
-    >>> except MissingCheckLetterException as exc:
+    >>> except dni.MissingCheckLetterException as exc:
     >>>     print(exc.render_as_dict())
     {
         'type': 'missing_check_letter',
