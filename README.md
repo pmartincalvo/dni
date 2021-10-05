@@ -47,13 +47,15 @@ $ pip install dni`
 - Avoid primitive obsession with the DNI class. Get the components of the DNI, 
   format it in different ways, check for equality.
 - Find and extract multiple DNIs from text.
-- Get detailed exceptions when a string has issues (see #TODO link).
+- Get detailed exceptions when a string has issues.
 
 
 ## Docs
 
-- For an extensive compilation of usage examples, check the quickstart in the docs. #TODO add link
-- You can find here the API reference. #TODO Add link
+- For an extensive compilation of usage examples, check the
+  [quickstart](https://dni.readthedocs.io/en/latest/quickstart.html) 
+  in the docs.
+- You can also check the full [API reference](https://dni.readthedocs.io/en/latest/api_reference.html).
 
 ## Misc
 
