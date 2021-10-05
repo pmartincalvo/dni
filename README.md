@@ -7,7 +7,7 @@ Simple DNI class and operations to make your life easier with Spanish Ids.
 >>> dni.is_valid("27592354J")
 True
 
->>> # Not a DNI.to make your life easier with Spanish Ids.
+>>> # Not a DNI
 >>> dni.is_valid("ABC123XYZ")
 False
 
