@@ -27,4 +27,5 @@ setup(
     license="LICENSE",
     description="Deal with Spanish DNIs in a Pythonic way.",
     long_description=open("README.md").read(),
+    long_description_content_type="text/markdown"
 )
