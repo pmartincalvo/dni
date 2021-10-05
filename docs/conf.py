@@ -53,3 +53,21 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+
+# -- Custom DNI tricks and hacks ---------------------------------------------
+
+# Make several variables available in the .rst files
+from dni import __version__ as version
+
+variables_to_export = ["version"]
+frozen_locals = dict(locals())
+rst_epilog = "\n".join(
+    map(
+        lambda var_name: f".. |{var_name}| replace:: {frozen_locals[var_name]}",
+        variables_to_export,
+    )
+)
+
+print(rst_epilog)
+del frozen_locals

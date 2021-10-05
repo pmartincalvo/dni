@@ -1,7 +1,7 @@
 dni
 ===============================
 
-Welcome to the docs.
+Welcome to the docs for version |version|.
 
 ``dni`` is a small python package to make your life easier with Spanish Ids.
 Currently, it supports the DNI specification. NIE and Spanish passports are
