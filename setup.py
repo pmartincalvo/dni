@@ -25,7 +25,13 @@ setup(
     author_email="pablomartincalvo+dni@gmail.com",
     packages=find_packages(),
     license="LICENSE",
+    url="https://github.com/pmartincalvo/dni",
     description="Deal with Spanish DNIs in a Pythonic way.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
+    python_requires=">=3.5",
+    project_urls={
+        'Documentation': 'https://dni.readthedocs.io',
+        'Source': 'https://github.com/pmartincalvo/dni',
+    },
 )
