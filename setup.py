@@ -31,7 +31,7 @@ setup(
     long_description_content_type="text/markdown",
     python_requires=">=3.5",
     project_urls={
-        'Documentation': 'https://dni.readthedocs.io',
-        'Source': 'https://github.com/pmartincalvo/dni',
+        "Documentation": "https://dni.readthedocs.io",
+        "Source": "https://github.com/pmartincalvo/dni",
     },
 )
