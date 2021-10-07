@@ -24,7 +24,7 @@ setup(
     author="Pablo Martin Calvo",
     author_email="pablomartincalvo+dni@gmail.com",
     packages=find_packages(),
-    license="LICENSE",
+    license="MIT License",
     url="https://github.com/pmartincalvo/dni",
     description="Deal with Spanish DNIs in a Pythonic way.",
     long_description=open("README.md").read(),
