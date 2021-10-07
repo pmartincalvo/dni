@@ -39,6 +39,18 @@ def dni_strings():
             "with_wrong_check_letter": "12315431  H",
             "valid_check_letter_character": "N",
         },
+        {
+            "valid": "71290112W",  # Thanks Ana
+            "without_check_letter": "71290112",
+            "with_wrong_check_letter": "71290112H",
+            "valid_check_letter_character": "W",
+        },
+        {
+            "valid": "05302398-R",  # Thanks Rodrigo
+            "without_check_letter": "05302398",
+            "with_wrong_check_letter": "05302398-H",
+            "valid_check_letter_character": "R",
+        },
     )
 
 
