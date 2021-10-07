@@ -1,7 +1,7 @@
 # dni
 Simple DNI class and operations to make your life easier with Spanish Ids.
 
-Release: 0.1.0
+Release: 0.1.1
 
 ```python
 >>> import dni
