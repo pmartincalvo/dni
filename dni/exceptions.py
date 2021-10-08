@@ -118,9 +118,3 @@ class MultipleMatchesException(Exception):
     """
     Expected only one occurrence, but found multiple.
     """
-
-
-class DoNotRaiseMe(Exception):
-    """
-    Never raise me!
-    """
