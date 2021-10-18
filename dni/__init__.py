@@ -20,7 +20,7 @@ from .exceptions import (
     MissingCheckLetterException,
     NoNumberFoundException,
     DNIExceptionDetails,
-    DoNotRaiseMe,
+    _DoNotRaiseMe,
 )
 
 __all__ = [
@@ -523,5 +523,5 @@ def _true_unless_some_exception(
     return _true_or_false_depending_on_exception(
         callable_to_run=callable_to_run,
         exceptions_that_lead_to_false=exceptions_that_lead_to_false,
-        exceptions_that_lead_to_true=DoNotRaiseMe,
+        exceptions_that_lead_to_true=_DoNotRaiseMe,
     )
