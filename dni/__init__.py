@@ -12,6 +12,7 @@ from .constants import (
     UPPER_AND_LOWER_CASE_CHECK_LETTERS,
     REGEX_FOR_FULL_DNI_WITH_POSSIBLE_CLUTTER,
     REGEX_FOR_NOT_A_DNI_CHAR,
+    NUMBER_CHARACTERS,
 )
 from .exceptions import (
     MultipleMatchesException,
@@ -140,19 +141,34 @@ class DNI:
         return self.number + separator + self.check_letter.lower()
 
     @classmethod
-    def random(cls, n: int = 1) -> Union["DNI", List["DNI"]]:
-        if n == 1:
+    def random(cls, quantity: int = 1) -> Union["DNI", List["DNI"]]:
+        """
+        Generate one or more random, valid DNI instances. Uniqueness is not
+        guaranteed, so duplicates are extremely improbable, but possible.
+
+        :param quantity: the number of DNI intances to generate.
+        :return: the random DNI instances.
+        """
+        if quantity <= 0:
+            raise ValueError(
+                "You can only request 1 or more random DNIs to be generated,"
+                f" but you requested: {quantity}"
+            )
+
+        if quantity == 1:
             return cls._generate_one_random_dni()
 
-        return [cls._generate_one_random_dni() for i in range(0, n)]
+        return [cls._generate_one_random_dni() for i in range(0, quantity)]
 
     @classmethod
     def _generate_one_random_dni(cls) -> "DNI":
-        number_characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        """
+        Generate a random, valid DNI instance by creating a random number and
+        computing the corresponding check letter.
 
-        number = "".join(
-            [random.choice(number_characters) for i in range(0, 8)]
-        )
+        :return: a valid DNI instance.
+        """
+        number = _generate_one_random_dni_number()
         check_letter = compute_check_letter(number)
 
         dni_string = number + check_letter
@@ -443,6 +459,16 @@ def _remove_clutter_from_potential_dni_string(a_string: str) -> str:
     string_without_clutter = re.sub(REGEX_FOR_NOT_A_DNI_CHAR, "", a_string)
 
     return string_without_clutter
+
+
+def _generate_one_random_dni_number() -> str:
+    """
+    Create a random and valid DNI number.
+
+    :return: the DNI number.
+    """
+    number = "".join([random.choice(NUMBER_CHARACTERS) for i in range(0, 8)])
+    return number
 
 
 def _true_or_false_depending_on_exception(

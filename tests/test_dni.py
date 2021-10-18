@@ -430,7 +430,7 @@ def test_generate_one_random_returns_one_valid_dni():
 
 def test_generate_multiple_random_returns_multiple_valid_dnis():
     n = 20
-    a_few_random_dnis = dni.DNI.random(n=n)
+    a_few_random_dnis = dni.DNI.random(quantity=n)
 
     all_are_dni_instances = all(
         (isinstance(a_dni, dni.DNI) for a_dni in a_few_random_dnis)
@@ -446,7 +446,7 @@ def test_generate_multiple_random_returns_multiple_valid_dnis():
 def test_generate_random_with_negative_number_raises_value_error():
 
     with pytest.raises(ValueError):
-        dni.DNI.random(n=-1)
+        dni.DNI.random(quantity=-1)
 
 
 class TestDNI:
