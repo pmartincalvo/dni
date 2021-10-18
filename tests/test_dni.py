@@ -443,6 +443,12 @@ def test_generate_multiple_random_returns_multiple_valid_dnis():
     assert all_are_dni_instances and all_are_valid_dnis and quantity_is_right
 
 
+def test_generate_random_with_negative_number_raises_value_error():
+
+    with pytest.raises(ValueError):
+        dni.DNI.random(n=-1)
+
+
 class TestDNI:
     def test_instantiate_dni_with_valids_works(self, dni_strings):
         dni_instances = [
