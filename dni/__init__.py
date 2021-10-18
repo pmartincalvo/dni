@@ -1,6 +1,7 @@
-from typing import List
-
+from typing import List, Callable, Union, Tuple
 import re
+from functools import partial
+import random
 
 from ._version import __version__
 from .constants import (
@@ -11,6 +12,7 @@ from .constants import (
     UPPER_AND_LOWER_CASE_CHECK_LETTERS,
     REGEX_FOR_FULL_DNI_WITH_POSSIBLE_CLUTTER,
     REGEX_FOR_NOT_A_DNI_CHAR,
+    NUMBER_CHARACTERS,
 )
 from .exceptions import (
     MultipleMatchesException,
@@ -18,6 +20,7 @@ from .exceptions import (
     MissingCheckLetterException,
     NoNumberFoundException,
     DNIExceptionDetails,
+    _DoNotRaiseMe,
 )
 
 __all__ = [
@@ -137,6 +140,40 @@ class DNI:
 
         return self.number + separator + self.check_letter.lower()
 
+    @classmethod
+    def random(cls, quantity: int = 1) -> Union["DNI", List["DNI"]]:
+        """
+        Generate one or more random, valid DNI instances. Uniqueness is not
+        guaranteed, so duplicates are extremely improbable, but possible.
+
+        :param quantity: the number of DNI intances to generate.
+        :return: the random DNI instances.
+        """
+        if quantity <= 0:
+            raise ValueError(
+                "You can only request 1 or more random DNIs to be generated,"
+                f" but you requested: {quantity}"
+            )
+
+        if quantity == 1:
+            return cls._generate_one_random_dni()
+
+        return [cls._generate_one_random_dni() for i in range(0, quantity)]
+
+    @classmethod
+    def _generate_one_random_dni(cls) -> "DNI":
+        """
+        Generate a random, valid DNI instance by creating a random number and
+        computing the corresponding check letter.
+
+        :return: a valid DNI instance.
+        """
+        number = _generate_one_random_dni_number()
+        check_letter = compute_check_letter(number)
+
+        dni_string = number + check_letter
+        return DNI(dni_string)
+
 
 def is_valid(potential_dni_string: str) -> bool:
     """
@@ -146,15 +183,14 @@ def is_valid(potential_dni_string: str) -> bool:
     :return: True if so, False otherwise.
     """
 
-    try:
-        DNI(potential_dni_string)
-        return True
-    except (
-        NoNumberFoundException,
-        MissingCheckLetterException,
-        InvalidCheckLetterException,
-    ):
-        return False
+    return _true_unless_some_exception(
+        callable_to_run=partial(DNI, potential_dni_string),
+        exceptions_that_lead_to_false=(
+            NoNumberFoundException,
+            MissingCheckLetterException,
+            InvalidCheckLetterException,
+        ),
+    )
 
 
 def check_letter_is_valid(potential_dni_string: str) -> bool:
@@ -166,13 +202,13 @@ def check_letter_is_valid(potential_dni_string: str) -> bool:
     :return: True if so, False otherwise.
     """
 
-    try:
-        _search_and_raise_issues_with_potential_dni_string(
-            potential_dni_string
-        )
-        return True
-    except InvalidCheckLetterException:
-        return False
+    return _true_unless_some_exception(
+        callable_to_run=partial(
+            _search_and_raise_issues_with_potential_dni_string,
+            potential_dni_string,
+        ),
+        exceptions_that_lead_to_false=InvalidCheckLetterException,
+    )
 
 
 def has_check_letter(potential_dni_string: str) -> bool:
@@ -185,15 +221,14 @@ def has_check_letter(potential_dni_string: str) -> bool:
     :return: True if so, False otherwise.
     """
 
-    try:
-        _search_and_raise_issues_with_potential_dni_string(
-            potential_dni_string
-        )
-        return True
-    except MissingCheckLetterException:
-        return False
-    except InvalidCheckLetterException:
-        return True
+    return _true_or_false_depending_on_exception(
+        callable_to_run=partial(
+            _search_and_raise_issues_with_potential_dni_string,
+            potential_dni_string,
+        ),
+        exceptions_that_lead_to_true=InvalidCheckLetterException,
+        exceptions_that_lead_to_false=MissingCheckLetterException,
+    )
 
 
 def compute_check_letter(dni_number: str) -> str:
@@ -353,11 +388,15 @@ def _contains_exactly_one_dni_number(a_string: str) -> bool:
     :param a_string: the string that could contain a number.
     :return: True if so, False otherwise.
     """
-    try:
-        _extract_exactly_one_dni_number_from_string(a_string)
-        return True
-    except (NoNumberFoundException, MultipleMatchesException):
-        return False
+    return _true_unless_some_exception(
+        callable_to_run=partial(
+            _extract_exactly_one_dni_number_from_string, a_string
+        ),
+        exceptions_that_lead_to_false=(
+            NoNumberFoundException,
+            MultipleMatchesException,
+        ),
+    )
 
 
 def _extract_exactly_one_dni_number_from_string(
@@ -420,3 +459,69 @@ def _remove_clutter_from_potential_dni_string(a_string: str) -> str:
     string_without_clutter = re.sub(REGEX_FOR_NOT_A_DNI_CHAR, "", a_string)
 
     return string_without_clutter
+
+
+def _generate_one_random_dni_number() -> str:
+    """
+    Create a random and valid DNI number.
+
+    :return: the DNI number.
+    """
+    number = "".join([random.choice(NUMBER_CHARACTERS) for i in range(0, 8)])
+    return number
+
+
+def _true_or_false_depending_on_exception(
+    callable_to_run: Callable,
+    exceptions_that_lead_to_true: Union[
+        type(Exception), Tuple[type(Exception)]
+    ],
+    exceptions_that_lead_to_false: Union[
+        type(Exception), Tuple[type(Exception)]
+    ],
+) -> bool:
+    """
+    Execute a callable. Return True if the callable runs without raising an
+    exception or raises an exception that leads to True. Return False if the
+    callable raises an exception that leads to False. If any other exception
+    is raised, it won't be catched.
+
+    :param callable_to_run: any callable object.
+    :param exceptions_that_lead_to_true: none, one or more exceptions that will
+    return True if raised.
+    :param exceptions_that_lead_to_false: none, one or more exceptions that will
+    return False if raised.
+    :return: True if no exception or a true exception is raised. False if a false
+    exception is raised.
+    """
+    try:
+        callable_to_run()
+        return True
+    except exceptions_that_lead_to_false:
+        return False
+    except exceptions_that_lead_to_true:
+        return True
+
+
+def _true_unless_some_exception(
+    callable_to_run: Callable,
+    exceptions_that_lead_to_false: Union[
+        type(Exception), Tuple[type(Exception)]
+    ],
+) -> bool:
+    """
+    Execute a callable. Return True if the callable runs without raising an
+    exception. Return False if the callable raises an exception that leads to
+    False. If any other exception is raised, it won't be catched.
+
+    :param callable_to_run: any callable object.
+    :param exceptions_that_lead_to_false: none, one or more exceptions that will
+    return False if raised.
+    :return: True if no exception or a true exception is raised. False if a false
+    exception is raised.
+    """
+    return _true_or_false_depending_on_exception(
+        callable_to_run=callable_to_run,
+        exceptions_that_lead_to_false=exceptions_that_lead_to_false,
+        exceptions_that_lead_to_true=_DoNotRaiseMe,
+    )

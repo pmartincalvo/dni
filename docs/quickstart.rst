@@ -119,3 +119,12 @@ Get details when things go wrong.
         }
     }
 
+Generate one or multiple random, valid DNIs:
+
+::
+
+    >>> dni.DNI.random()
+    DNI('12543456S')
+
+    >>> dni.DNI.random(quantity=3)
+    [DNI('12543456S'), DNI('65412354D'), DNI('71290112W')]
