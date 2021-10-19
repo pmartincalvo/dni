@@ -1,4 +1,13 @@
 # dni
+
+<p align="center">
+<a href="https://github.com/pmartincalvo/dni/actions"><img alt="Actions Status" src="https://github.com/pmartincalvo/dni/workflows/latest/badge.svg"></a>
+<a href="https://dni.readthedocs.io/en/stable/?badge=stable"><img alt="Documentation Status" src="https://readthedocs.org/projects/dni/badge/?version=stable"></a>
+<a href="https://github.com/pmartincalvo/dni/blob/main/LICENSE"><img alt="License: MIT" src="https://black.readthedocs.io/en/stable/_static/license.svg"></a>
+<a href="https://pypi.org/project/black/"><img alt="PyPI" src="https://img.shields.io/pypi/v/dni"></a>
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+</p>
+
 Simple DNI class and operations to make your life easier with Spanish Ids.
 
 Release: 0.1.1
