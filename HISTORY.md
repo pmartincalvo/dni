@@ -1,5 +1,10 @@
 # History
 
+## 0.2.0 - 2021-10-19
+
+### Added
+- Included a new method in the `DNI` class to generate random, valid DNIs.
+
 ## 0.1.1 - 2021-10-7
 
 ### Fixed 
