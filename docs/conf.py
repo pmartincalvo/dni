@@ -22,9 +22,6 @@ project = "dni"
 copyright = "2021, Pablo Martin Calvo"
 author = "Pablo Martin Calvo"
 
-# The full version, including alpha/beta/rc tags
-release = "0.1.0"
-
 
 # -- General configuration ---------------------------------------------------
 
