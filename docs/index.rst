@@ -15,7 +15,7 @@ Features include:
   format it in different ways, check for equality.
 - Find and extract multiple DNIs from text.
 - Get detailed exceptions when a string has issues.
-
+- Generate random, valid DNIs.
 
 .. toctree::
     :maxdepth: 1
