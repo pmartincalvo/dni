@@ -42,6 +42,9 @@ True
 
 >>> dni.extract_dnis_from_text("Mi DNI no es 12543456-S, es el 65412354-D.")
 [DNI('12543456S'), DNI('65412354D')]
+
+>>> dni.DNI.random()
+DNI("02448431N")
 ```
 
 ## Install
@@ -59,14 +62,15 @@ $ pip install dni`
   format it in different ways, check for equality.
 - Find and extract multiple DNIs from text.
 - Get detailed exceptions when a string has issues.
+- Generate random, valid DNIs.
 
 
 ## Docs
 
 - For an extensive compilation of usage examples, check the
-  [quickstart](https://dni.readthedocs.io/en/0.1.0/quickstart.html) 
+  [quickstart](https://dni.readthedocs.io/en/0.2.0/quickstart.html) 
   in the docs.
-- You can also check the full [API reference](https://dni.readthedocs.io/en/0.1.0/api_reference.html).
+- You can also check the full [API reference](https://dni.readthedocs.io/en/0.2.0/api_reference.html).
 
 ## Misc
 
