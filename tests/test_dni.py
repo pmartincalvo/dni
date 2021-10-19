@@ -420,6 +420,35 @@ def test_remove_clutter_from_cluttered_string_returns_clean():
     assert processed_string == "27592354J"
 
 
+def test_generate_one_random_returns_one_valid_dni():
+    a_random_dni = dni.DNI.random()
+
+    assert isinstance(a_random_dni, dni.DNI) and dni.is_valid(
+        a_random_dni.format()
+    )
+
+
+def test_generate_multiple_random_returns_multiple_valid_dnis():
+    n = 20
+    a_few_random_dnis = dni.DNI.random(quantity=n)
+
+    all_are_dni_instances = all(
+        (isinstance(a_dni, dni.DNI) for a_dni in a_few_random_dnis)
+    )
+    all_are_valid_dnis = all(
+        (dni.is_valid(a_dni.format()) for a_dni in a_few_random_dnis)
+    )
+    quantity_is_right = len(a_few_random_dnis) == n
+
+    assert all_are_dni_instances and all_are_valid_dnis and quantity_is_right
+
+
+def test_generate_random_with_negative_number_raises_value_error():
+
+    with pytest.raises(ValueError):
+        dni.DNI.random(quantity=-1)
+
+
 class TestDNI:
     def test_instantiate_dni_with_valids_works(self, dni_strings):
         dni_instances = [
