@@ -50,29 +50,28 @@ DNI("02448431N")
 ## Install
 
 ```shell
-$ pip install dni`
+$ pip install dni
 ```
 
 ## Features
 
-- Applies for Spanish DNI IDs.
-- Check validity of DNIs.
-- Get check letter for a DNI number.
-- Avoid primitive obsession with the DNI class. Get the components of the DNI, 
+* Applies for Spanish DNI IDs.
+* Check validity of DNIs.
+* Get check letter for a DNI number.
+* Avoid primitive obsession with the DNI class. Get the components of the DNI, 
   format it in different ways, check for equality.
-- Find and extract multiple DNIs from text.
-- Get detailed exceptions when a string has issues.
-- Generate random, valid DNIs.
-
+* Find and extract multiple DNIs from text.
+* Get detailed exceptions when a string has issues.
+* Generate random, valid DNIs.
 
 ## Docs
 
-- For an extensive compilation of usage examples, check the
+* For an extensive compilation of usage examples, check the
   [quickstart](https://dni.readthedocs.io/en/0.2.0/quickstart.html) 
   in the docs.
-- You can also check the full [API reference](https://dni.readthedocs.io/en/0.2.0/api_reference.html).
+* You can also check the full [API reference](https://dni.readthedocs.io/en/0.2.0/api_reference.html).
 
 ## Misc
 
-- If you spot a bug or want to request a feature, feel free to open an issue in
+* If you spot a bug or want to request a feature, feel free to open an issue in
   this repository.
